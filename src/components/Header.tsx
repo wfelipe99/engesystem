@@ -3,7 +3,7 @@ import Image from 'next/image'
 
 const Header = () => {
   return (
-    <HStack bgColor="brand.primary" justify="space-between" spacing="6" p="6">
+    <HStack bgColor="brand.primary" justify="space-between" spacing="6" p="6" h="10%">
       <HStack spacing="6">
         <Image src="/logo.png" alt="Logo da empresa" width="60" height="60" />
         <Heading as="h1" color="white">
@@ -13,7 +13,7 @@ const Header = () => {
 
       <HStack bgColor="red.600" p="2" rounded="2xl" spacing="4">
         <Avatar
-          name="Dan Abrahmov"
+          name="Padrxn"
           src="http://www.petplan.com.au/blog/wp-content/uploads/2016/12/pet-insurance-dog-cat-8.jpg"
         />
 
