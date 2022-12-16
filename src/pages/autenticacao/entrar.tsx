@@ -27,7 +27,7 @@ const Entrar: NextPage<Props> = ({ csrfToken }) => {
         <Container maxW="lg">
           <Stack spacing="8">
             <VStack spacing="2">
-              <Image src="/logo.png" alt="Logo com as palavras Evolution Construções" width="100" height="100" />
+              <Image src="/logo.png" alt="Logo da empresa" width="100" height="100" />
               <Heading as="h1" size="xl" color="white">
                 {process.env.NEXT_PUBLIC_COMPANY_NAME}
               </Heading>

@@ -1,5 +1,5 @@
 import { Box, Center, Text, Heading, Stack, Container } from '@chakra-ui/react'
-import { NextPage } from 'next'
+import type { NextPage } from 'next'
 
 const VerifiqueEmail: NextPage = () => {
   return (
