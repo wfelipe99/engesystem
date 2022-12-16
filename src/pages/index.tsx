@@ -10,10 +10,10 @@ import { Box, Center, Heading } from '@chakra-ui/react'
 
 const Home: NextPage = () => {
   const { data: session, status } = useSession()
-  const nextRouter = useRouter()
+  const router = useRouter()
 
   if (status === 'loading') return <Box>Carregando...</Box>
-  if (status === 'unauthenticated') nextRouter.push('/api/auth/signin')
+  if (status === 'unauthenticated') router.push('/api/auth/signin')
 
   return (
     <>
