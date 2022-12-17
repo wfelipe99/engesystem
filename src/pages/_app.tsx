@@ -18,7 +18,17 @@ const theme = {
 }
 const brandTheme = extendTheme(theme)
 
-const MyApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { session, ...pageProps } }) => {
+const MyApp: AppType<{ session: Session | null }> = ({ Component, router, pageProps: { session, ...pageProps } }) => {
+  if (router.pathname.startsWith('/autenticacao/')) {
+    return (
+      <SessionProvider session={session}>
+        <ChakraProvider theme={brandTheme}>
+          <Component {...pageProps} />
+        </ChakraProvider>
+      </SessionProvider>
+    )
+  }
+
   return (
     <SessionProvider session={session}>
       <ChakraProvider theme={brandTheme}>

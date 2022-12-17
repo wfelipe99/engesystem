@@ -1,14 +1,17 @@
 import { Avatar, Box, Flex, Heading, HStack, Stack, VStack, Text } from '@chakra-ui/react'
 import Image from 'next/image'
+import Link from 'next/link'
 
 const Header = () => {
   return (
     <HStack bgColor="brand.primary" justify="space-between" spacing="6" p="6" h="10%">
       <HStack spacing="6">
         <Image src="/logo.png" alt="Logo da empresa" width="60" height="60" />
-        <Heading as="h1" color="white">
-          Evolution Construções
-        </Heading>
+        <Link href="/">
+          <Heading as="h1" color="white">
+            Evolution Construções
+          </Heading>
+        </Link>
       </HStack>
 
       <HStack bgColor="red.600" p="2" rounded="2xl" spacing="4">

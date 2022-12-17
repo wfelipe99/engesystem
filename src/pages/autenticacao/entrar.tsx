@@ -35,19 +35,17 @@ const Entrar: NextPage<Props> = ({ csrfToken }) => {
 
             <Box p="6" boxShadow="2xl" borderRadius="xl" bgColor="white">
               <form method="POST" action="/api/auth/signin/email">
-                <Stack spacing="6">
-                  <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
+                <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
 
-                  <FormControl>
-                    <FormLabel htmlFor="email">E-mail</FormLabel>
-                    <Input id="email" name="email" type="email" placeholder="Digite o seu e-mail" isRequired />
-                    <FormHelperText>O e-mail deve ser o mesmo fornecido pela gerência.</FormHelperText>
-                  </FormControl>
+                <FormControl>
+                  <FormLabel htmlFor="email">E-mail</FormLabel>
+                  <Input id="email" name="email" type="email" placeholder="Digite o seu e-mail" isRequired />
+                  <FormHelperText>O e-mail deve ser o mesmo fornecido pela gerência.</FormHelperText>
+                </FormControl>
 
-                  <Button type="submit" colorScheme="blue">
-                    Entrar
-                  </Button>
-                </Stack>
+                <Button mt="6" w="full" type="submit" colorScheme="blue">
+                  Entrar
+                </Button>
               </form>
             </Box>
           </Stack>

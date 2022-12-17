@@ -2,6 +2,7 @@ import { Box, UnorderedList, ListItem, Stack, ListIcon, Text, HStack } from '@ch
 import { BsFillPeopleFill } from 'react-icons/bs'
 import { TbHierarchy2 } from 'react-icons/tb'
 import { CiMoneyBill } from 'react-icons/ci'
+import Link from 'next/link'
 
 export default function Sidebar() {
   return (
@@ -16,7 +17,9 @@ export default function Sidebar() {
 
             <UnorderedList listStyleType="none">
               <Box ml="8">
-                <ListItem>Registrar</ListItem>
+                <ListItem>
+                  <Link href="/funcionarios/registrar">Registrar</Link>
+                </ListItem>
                 <ListItem>Gerenciar</ListItem>
               </Box>
             </UnorderedList>
