@@ -10,11 +10,18 @@ import { prisma } from '../../../server/db/client'
 export const authOptions: NextAuthOptions = {
   // Include user.id on session
   callbacks: {
-    session({ session, user }) {
+    async session({ session, user }) {
       if (session.user) {
         session.user.id = user.id
-        session.user.role = user.role
+
+        // TODO: remove this DB query
+        // is it possible to not make this query since user is already returned?
+        // I'd need only to include the role in query
+        const role = await prisma.role.findUnique({ where: { id: user.roleId } })
+        session.user.role = role
       }
+
+      console.log(session)
 
       return session
     },

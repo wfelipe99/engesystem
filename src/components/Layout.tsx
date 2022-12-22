@@ -12,7 +12,9 @@ export default function Layout({ children }: Props) {
     <Box h="100vh">
       <Header />
       <Sidebar />
-      <main>{children}</main>
+      <Box h="90%" as="main" bgColor="whitesmoke">
+        {children}
+      </Box>
     </Box>
   )
 }
