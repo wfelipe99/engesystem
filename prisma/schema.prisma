@@ -42,6 +42,7 @@ model Session {
 model User {
   id            String    @id @default(cuid())
   roleId        String    @unique
+  bankInfoId    String    @unique
   name          String
   email         String    @unique
   emailVerified DateTime?
@@ -49,6 +50,16 @@ model User {
   accounts      Account[]
   sessions      Session[]
   role          Role      @relation(fields: [roleId], references: [id])
+  bankInfo      BankInfo  @relation(fields: [bankInfoId], references: [id])
+}
+
+model BankInfo {
+  id        String  @id @default(cuid())
+  agency    Int?
+  account   Int?
+  operation Int?
+  pix       String?
+  User      User?
 }
 
 model Role {

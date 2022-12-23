@@ -4,7 +4,7 @@ import { Role } from '../../../utils/utils'
 
 import { router, protectedProcedure } from '../trpc'
 
-export const employeesRouter = router({
+export const employeeRouter = router({
   register: protectedProcedure
     .input(
       z.object({
