@@ -9,8 +9,15 @@ export const employeeRouter = router({
     .input(
       z.object({
         name: z.string(),
-        roleName: z.string(),
         email: z.string().email({ message: 'Formato de e-mail inválido.' }),
+        roleName: z.string(),
+        admissionData: z.date(),
+        CPF: z.string(),
+        pixKey: z.string().nullish(),
+        bank: z.string().nullish(),
+        agency: z.string().nullish(),
+        account: z.string().nullish(),
+        operation: z.string().nullish(),
       })
     )
     .mutation(async ({ input, ctx }) => {
