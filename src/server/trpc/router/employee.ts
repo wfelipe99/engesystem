@@ -11,8 +11,9 @@ export const employeeRouter = router({
         name: z.string(),
         email: z.string().email({ message: 'Formato de e-mail inválido.' }),
         roleName: z.string(),
-        admissionData: z.date(),
         CPF: z.string(),
+        admissionDate: z.date(),
+        UF: z.string(),
         pixKey: z.string().nullish(),
         bank: z.string().nullish(),
         agency: z.string().nullish(),
@@ -21,16 +22,42 @@ export const employeeRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      if (!ctx.session.user.role || ctx.session.user.role.hierarchy < Role.Administrativo) {
+      const user = ctx.session.user
+
+      if (!user.role || user.role.hierarchy < Role.Administrativo) {
         throw new TRPCError({ code: 'UNAUTHORIZED' })
       }
 
-      const role = await ctx.prisma.role.findUnique({ where: { name: input.roleName } })
+      const userBeingRegisteredRole = await ctx.prisma.role.findUnique({ where: { name: input.roleName } })
+      console.log(userBeingRegisteredRole)
 
-      if (!role) throw new TRPCError({ code: 'UNAUTHORIZED' })
+      if (!userBeingRegisteredRole || user.role.hierarchy < userBeingRegisteredRole.hierarchy) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' })
+      }
 
-      return ctx.prisma.user.create({
-        data: { name: input.name, email: input.email, role: { connect: { id: role.id } } },
+      const { name, email, CPF, admissionDate, UF, pixKey, bank, agency, account, operation } = input
+
+      // FIX: It's not creating the user
+      await ctx.prisma.user.create({
+        data: {
+          name,
+          email,
+          CPF,
+          admissionDate,
+          UF,
+          pixKey,
+          bank,
+          agency,
+          account,
+          operation,
+          role: {
+            connect: { id: userBeingRegisteredRole.id },
+          },
+        },
       })
+
+      return {
+        successfulMessage: 'Funcionário cadastrado.',
+      }
     }),
 })

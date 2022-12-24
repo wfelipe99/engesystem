@@ -42,33 +42,28 @@ model Session {
 model User {
   id            String    @id @default(cuid())
   roleId        String    @unique
-  bankInfoId    String    @unique
   name          String
   email         String    @unique
   emailVerified DateTime?
   image         String?
-  CPF           Int
-  admissionData DateTime
-  State         String
+  CPF           String
+  admissionDate DateTime  @db.Timestamptz()
+  UF            String
+  bank          String?
+  agency        String?
+  account       String?
+  operation     String?
+  pixKey        String?
   accounts      Account[]
   sessions      Session[]
   role          Role      @relation(fields: [roleId], references: [id])
-  bankInfo      BankInfo  @relation(fields: [bankInfoId], references: [id])
-}
-
-model BankInfo {
-  id        String  @id @default(cuid())
-  bank      String?
-  agency    Int?
-  account   Int?
-  operation Int?
-  pixKey    String?
-  User      User?
 }
 
 model Role {
   id        String @id @default(cuid())
   name      String @unique
+  // WARNING: Any modification to this values, change it on TypeScript side too,
+  // which is in utils/utils.ts
   // Hierarchy:
   // 0: Incapaz de acessar o sistema
   // 1: Apontador

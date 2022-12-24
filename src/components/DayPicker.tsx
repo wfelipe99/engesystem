@@ -7,20 +7,6 @@ import 'react-day-picker/dist/style.css'
 
 export const dayPickerAtom = atom<Date>(new Date())
 
-export default function DayPicker() {
-  const [selected, setSelected] = useAtom(dayPickerAtom)
-
-  let footer = <p>Please pick a day.</p>
-  if (selected) {
-    footer = <p>You picked {format(selected, 'PP')}.</p>
-  }
-  return (
-    <ReactDayPicker
-      mode="single"
-      selected={selected}
-      onSelect={(e) => setSelected(e as Date)}
-      footer={footer}
-      locale={ptBR}
-    />
-  )
+export default function DayPicker(props: any) {
+  return <ReactDayPicker mode="single" locale={ptBR} {...props} />
 }

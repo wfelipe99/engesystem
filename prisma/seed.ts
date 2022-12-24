@@ -15,13 +15,45 @@ async function main() {
   })
 
   await prisma.user.create({
-    data: { name: 'Caíque Müller', email: 'a@email.com', role: { connect: { id: CEO.id } } },
+    data: {
+      name: 'Caíque Müller',
+      email: 'a@email.com',
+      CPF: 'a',
+      admissionDate: new Date(),
+      UF: 'Pernambuco',
+      bank: 'Caixa',
+      agency: '123',
+      account: '12336987-2',
+      operation: '013',
+      pixKey: null,
+      role: { connect: { id: CEO.id } },
+    },
   })
   await prisma.user.create({
-    data: { name: 'Wevelly Felipe', email: 'b@email.com', role: { connect: { id: Administrativo.id } } },
+    data: {
+      name: 'Wevelly Felipe',
+      email: 'b@email.com',
+      CPF: 'a',
+      admissionDate: new Date(),
+      UF: 'Pernambuco',
+      pixKey: '123',
+      role: { connect: { id: Administrativo.id } },
+    },
   })
   await prisma.user.create({
-    data: { name: 'Padrxn', email: 'c@email.com', role: { connect: { id: Apontador.id } } },
+    data: {
+      name: 'Padrxn',
+      email: 'c@email.com',
+      CPF: 'a',
+      admissionDate: new Date(),
+      UF: 'Pernambuco',
+      bank: 'Caixa',
+      agency: '123',
+      account: '12336987-2',
+      operation: '013',
+      pixKey: null,
+      role: { connect: { id: Apontador.id } },
+    },
   })
 }
 main()
