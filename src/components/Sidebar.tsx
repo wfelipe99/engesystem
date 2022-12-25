@@ -20,7 +20,9 @@ export default function Sidebar() {
                 <ListItem>
                   <Link href="/funcionarios/registrar">Registrar</Link>
                 </ListItem>
-                <ListItem>Gerenciar</ListItem>
+                <ListItem>
+                  <Link href="/funcionarios/gerenciar">Gerenciar</Link>
+                </ListItem>
               </Box>
             </UnorderedList>
           </ListItem>

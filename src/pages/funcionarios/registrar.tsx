@@ -3,9 +3,9 @@ import type { NextPage } from 'next'
 import { useState } from 'react'
 import { trpc } from '../../utils/trpc'
 import Head from 'next/head'
-import DayPicker, { dayPickerAtom } from '../../components/DayPicker'
-import { useAtom } from 'jotai'
-import { Controller, SubmitHandler, useForm } from 'react-hook-form'
+import DayPicker from '../../components/DayPicker'
+import { Controller, useForm } from 'react-hook-form'
+import type { SubmitHandler } from 'react-hook-form'
 
 type Inputs = {
   name: string
@@ -22,7 +22,6 @@ type Inputs = {
 }
 
 const Registrar: NextPage = () => {
-  const [admissionDate] = useAtom<Date>(dayPickerAtom)
   const [bankInfo, setBankInfo] = useState<string>('Banco')
 
   const { register, handleSubmit, control } = useForm()

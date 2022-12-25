@@ -60,4 +60,16 @@ export const employeeRouter = router({
         successfulMessage: 'Funcionário cadastrado.',
       }
     }),
+
+  getAll: protectedProcedure.query(async ({ ctx }) => {
+    const user = ctx.session.user
+
+    const userRoles = await ctx.prisma.user.findUnique({ where: { id: user.id }, select: { roles: true } })
+
+    if (!userRoles || !userRoles.roles[0] || userRoles.roles[0].hierarchy < Role.Administrativo) {
+      throw new TRPCError({ code: 'UNAUTHORIZED' })
+    }
+
+    return ctx.prisma.user.findMany({ include: { roles: true } })
+  }),
 })
