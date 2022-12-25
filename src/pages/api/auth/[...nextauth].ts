@@ -17,8 +17,8 @@ export const authOptions: NextAuthOptions = {
         // TODO: remove this DB query
         // is it possible to not make this query since user is already returned?
         // I'd need only to include the role in query
-        const role = await prisma.role.findUnique({ where: { id: user.roleId } })
-        session.user.role = role
+        const userRoles = await prisma.user.findUnique({ where: { id: user.id }, select: { roles: true } })
+        session.user.roles = (userRoles ?? { roles: [] }).roles
       }
 
       console.log(session)

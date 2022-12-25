@@ -4,8 +4,14 @@ const prisma = new PrismaClient()
 
 async function main() {
   const CEO = await prisma.role.create({ data: { name: 'CEO', hierarchy: 3 } })
-  const Administrativo = await prisma.role.create({ data: { name: 'Administrativo', hierarchy: 2 } })
-  const Apontador = await prisma.role.create({ data: { name: 'Apontador', hierarchy: 1 } })
+
+  const Administrativo = await prisma.role.create({
+    data: { name: 'Administrativo', hierarchy: 2 },
+  })
+
+  const Apontador = await prisma.role.create({
+    data: { name: 'Apontador', hierarchy: 1 },
+  })
 
   await prisma.role.createMany({
     data: [
@@ -26,9 +32,12 @@ async function main() {
       account: '12336987-2',
       operation: '013',
       pixKey: null,
-      role: { connect: { id: CEO.id } },
+      roles: {
+        connect: { id: CEO.id },
+      },
     },
   })
+
   await prisma.user.create({
     data: {
       name: 'Wevelly Felipe',
@@ -37,9 +46,12 @@ async function main() {
       admissionDate: new Date(),
       UF: 'Pernambuco',
       pixKey: '123',
-      role: { connect: { id: Administrativo.id } },
+      roles: {
+        connect: { id: Administrativo.id },
+      },
     },
   })
+
   await prisma.user.create({
     data: {
       name: 'Padrxn',
@@ -52,7 +64,9 @@ async function main() {
       account: '12336987-2',
       operation: '013',
       pixKey: null,
-      role: { connect: { id: Apontador.id } },
+      roles: {
+        connect: { id: Apontador.id },
+      },
     },
   })
 }

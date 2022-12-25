@@ -5,12 +5,16 @@ import { router, protectedProcedure } from '../trpc'
 
 export const roleRouter = router({
   getAll: protectedProcedure.query(async ({ ctx }) => {
-    if (!ctx.session.user.role || ctx.session.user.role.hierarchy < Role.Administrativo) {
+    const user = ctx.session.user
+
+    const userRoles = await ctx.prisma.user.findUnique({ where: { id: user.id }, select: { roles: true } })
+
+    if (!userRoles || !userRoles.roles[0] || userRoles.roles[0].hierarchy < Role.Administrativo) {
       throw new TRPCError({ code: 'UNAUTHORIZED' })
     }
 
     let roles = await ctx.prisma.role.findMany()
-    roles = roles.filter((role) => role.hierarchy <= (ctx.session.user.role?.hierarchy as number))
+    roles = roles.filter((role) => role.hierarchy <= (userRoles.roles[0]!.hierarchy as number))
 
     return roles
   }),

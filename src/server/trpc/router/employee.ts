@@ -24,14 +24,16 @@ export const employeeRouter = router({
     .mutation(async ({ input, ctx }) => {
       const user = ctx.session.user
 
-      if (!user.role || user.role.hierarchy < Role.Administrativo) {
+      const userRoles = await ctx.prisma.user.findUnique({ where: { id: user.id }, select: { roles: true } })
+      console.log(userRoles)
+
+      if (!userRoles || !userRoles.roles[0] || userRoles.roles[0].hierarchy < Role.Administrativo) {
         throw new TRPCError({ code: 'UNAUTHORIZED' })
       }
 
       const userBeingRegisteredRole = await ctx.prisma.role.findUnique({ where: { name: input.roleName } })
-      console.log(userBeingRegisteredRole)
 
-      if (!userBeingRegisteredRole || user.role.hierarchy < userBeingRegisteredRole.hierarchy) {
+      if (!userBeingRegisteredRole || userRoles.roles[0].hierarchy < userBeingRegisteredRole.hierarchy) {
         throw new TRPCError({ code: 'UNAUTHORIZED' })
       }
 
@@ -50,9 +52,7 @@ export const employeeRouter = router({
           agency,
           account,
           operation,
-          role: {
-            connect: { id: userBeingRegisteredRole.id },
-          },
+          roles: { connect: { id: userBeingRegisteredRole.id } },
         },
       })
 

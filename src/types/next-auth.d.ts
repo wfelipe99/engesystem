@@ -13,11 +13,20 @@ declare module 'next-auth' {
     } & DefaultSession['user']
   }*/
   // TODO: type it correctly so [...nextauth].ts can use it correctly
+
+  // 1: Define a type that includes the relation to `Post`
+  const userWithRoles = Prisma.validator<Prisma.UserArgs>()({
+    include: { roles: true },
+  })
+
+  // 3: This type will include a user and all their posts
+  type UserWithRoles = Prisma.UserGetPayload<typeof userWithRoles>
+
   interface Session {
-    user?: UserPrisma & DefaultSession['user']
+    user?: UserWithRoles & DefaultSession['user']
   }
 
-  type User = UserPrisma
+  type User = UserWithRoles
   /*interface User extends UserPrisma {
     roleId: string
     role: Role | null
