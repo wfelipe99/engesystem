@@ -33,14 +33,16 @@ const Gerenciar: NextPage = () => {
       },
       headerName: 'UF',
       filter: true,
+      resizable: true,
     },
-    { field: 'name', headerName: 'Nome', filter: true, sort: 'asc' },
+    { field: 'name', headerName: 'Nome', filter: true, sort: 'asc', resizable: true },
     {
       valueGetter: (params) => {
         return params.data.roles[0].name
       },
       headerName: 'Função',
       filter: true,
+      resizable: true,
     },
     {
       valueGetter: (params) => {
@@ -48,6 +50,7 @@ const Gerenciar: NextPage = () => {
       },
       headerName: 'Data de Admissão',
       filter: true,
+      resizable: true,
     },
   ]
 
@@ -68,8 +71,8 @@ const Gerenciar: NextPage = () => {
 
   // Example of consuming Grid Event
   const cellDoubleClickedListener = useCallback(
-    (event: CellDoubleClickedEvent) => {
-      router.push(`/funcionarios/gerenciar/${event.data.id}`)
+    (e: CellDoubleClickedEvent) => {
+      router.push(`/funcionarios/gerenciar/${e.data.id}`)
     },
     [router]
   )
@@ -90,9 +93,9 @@ const Gerenciar: NextPage = () => {
               defaultColDef={defaultColDef} // Default Column Properties
               animateRows={true} // Optional - set to 'true' to have rows animate when sorted
               rowSelection="multiple" // Options - allows click selection of rows
-              // onCellClicked={cellClickedListener} // Optional - registering for Grid Event
               onRowDoubleClicked={cellDoubleClickedListener}
               localeText={AG_GRID_LOCALE_PT_BR}
+              enableCellTextSelection
             />
           </div>
         </div>
