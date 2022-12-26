@@ -10,10 +10,9 @@ export const employeeRouter = router({
       z.object({
         name: z.string(),
         email: z.string().email({ message: 'Formato de e-mail inválido.' }),
-        roleName: z.string(),
+        roleId: z.string(),
         CPF: z.string(),
         admissionDate: z.date(),
-        UF: z.string(),
         pixKey: z.string().nullish(),
         bank: z.string().nullish(),
         agency: z.string().nullish(),
@@ -25,28 +24,25 @@ export const employeeRouter = router({
       const user = ctx.session.user
 
       const userRoles = await ctx.prisma.user.findUnique({ where: { id: user.id }, select: { roles: true } })
-      console.log(userRoles)
+
+      const { name, email, roleId, CPF, admissionDate, pixKey, bank, agency, account, operation } = input
 
       if (!userRoles || !userRoles.roles[0] || userRoles.roles[0].hierarchy < Role.Administrativo) {
         throw new TRPCError({ code: 'UNAUTHORIZED' })
       }
 
-      const userBeingRegisteredRole = await ctx.prisma.role.findUnique({ where: { name: input.roleName } })
+      const userBeingRegisteredRole = await ctx.prisma.role.findUnique({ where: { id: roleId } })
 
       if (!userBeingRegisteredRole || userRoles.roles[0].hierarchy < userBeingRegisteredRole.hierarchy) {
         throw new TRPCError({ code: 'UNAUTHORIZED' })
       }
 
-      const { name, email, CPF, admissionDate, UF, pixKey, bank, agency, account, operation } = input
-
-      // FIX: It's not creating the user
       await ctx.prisma.user.create({
         data: {
           name,
           email,
           CPF,
           admissionDate,
-          UF,
           pixKey,
           bank,
           agency,
@@ -72,4 +68,24 @@ export const employeeRouter = router({
 
     return ctx.prisma.user.findMany({ include: { roles: true } })
   }),
+
+  getById: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const user = ctx.session.user
+
+      const userRoles = await ctx.prisma.user.findUnique({ where: { id: user.id }, select: { roles: true } })
+
+      if (!userRoles || !userRoles.roles[0] || userRoles.roles[0].hierarchy < Role.Administrativo) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' })
+      }
+
+      const { id } = input
+
+      return ctx.prisma.user.findUnique({ where: { id }, include: { roles: true } })
+    }),
 })

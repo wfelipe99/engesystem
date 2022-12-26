@@ -47,7 +47,6 @@ model User {
   image         String?
   CPF           String
   admissionDate DateTime  @db.Timestamptz()
-  UF            String
   bank          String?
   agency        String?
   account       String?
@@ -56,11 +55,15 @@ model User {
   accounts      Account[]
   sessions      Session[]
   roles         Role[]
+
+  @@unique([name, CPF])
 }
 
 model Role {
-  id        String @id @default(cuid())
-  name      String @unique
+  id        String  @id @default(cuid())
+  name      String
+  UF        String
+  salary    Decimal @db.Decimal(10, 2)
   // WARNING: Any modification to this values, change it on TypeScript side too,
   // which is in utils/utils.ts
   // Hierarchy:
@@ -70,6 +73,8 @@ model Role {
   // 3: CEO
   hierarchy Int
   users     User[]
+
+  @@unique([name, UF])
 }
 
 model VerificationToken {

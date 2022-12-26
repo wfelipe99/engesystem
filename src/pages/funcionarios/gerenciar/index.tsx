@@ -1,15 +1,20 @@
 import { Container, Box } from '@chakra-ui/react'
 import type { NextPage } from 'next'
-import { trpc } from '../../utils/trpc'
+import { trpc } from '../../../utils/trpc'
 
 import { useState, useRef, useMemo, useCallback } from 'react'
 import { AgGridReact } from 'ag-grid-react' // the AG Grid React Component
 
 import 'ag-grid-community/styles/ag-grid.css' // Core grid CSS, always needed
 import 'ag-grid-community/styles/ag-theme-alpine.css' // Optional theme CSS
-import { AG_GRID_LOCALE_PT_BR } from '../../utils/utils'
+import { AG_GRID_LOCALE_PT_BR } from '../../../utils/utils'
+import { useRouter } from 'next/router'
+import { format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 
 const Gerenciar: NextPage = () => {
+  const router = useRouter()
+
   const tableFields = [
     { field: 'UF', filter: true },
     { field: 'name', headerName: 'Nome', filter: true },
@@ -18,6 +23,14 @@ const Gerenciar: NextPage = () => {
         return params.data.roles[0].name
       },
       headerName: 'Função',
+      filter: true,
+    },
+    {
+      valueGetter: (params) => {
+        const a = format(params.data.admissionDate, "d 'de' MMMM 'de' u", { locale: ptBR })
+        return a
+      },
+      headerName: 'Data de Admissão',
       filter: true,
     },
   ]
@@ -35,9 +48,12 @@ const Gerenciar: NextPage = () => {
   }))
 
   // Example of consuming Grid Event
-  const cellClickedListener = useCallback((event) => {
-    console.log('cellClicked', event)
-  }, [])
+  const cellDoubleClickedListener = useCallback(
+    (event) => {
+      router.push(`/funcionarios/gerenciar/${event.data.id}`)
+    },
+    [router]
+  )
 
   // Example using Grid's API
   const buttonListener = useCallback((e) => {
@@ -49,7 +65,7 @@ const Gerenciar: NextPage = () => {
       <Box w="100%">
         <div>
           {/* Example using Grid's API */}
-          <button onClick={buttonListener}>Push Me</button>
+          {/* <button onClick={buttonListener}>Push Me</button> */}
 
           {/* On div wrapping Grid a) specify theme CSS Class Class and b) sets Grid size */}
           <div className="ag-theme-alpine" style={{ width: '100%', height: 500 }}>
@@ -60,7 +76,8 @@ const Gerenciar: NextPage = () => {
               defaultColDef={defaultColDef} // Default Column Properties
               animateRows={true} // Optional - set to 'true' to have rows animate when sorted
               rowSelection="multiple" // Options - allows click selection of rows
-              onCellClicked={cellClickedListener} // Optional - registering for Grid Event
+              // onCellClicked={cellClickedListener} // Optional - registering for Grid Event
+              onRowDoubleClicked={cellDoubleClickedListener}
               localeText={AG_GRID_LOCALE_PT_BR}
             />
           </div>

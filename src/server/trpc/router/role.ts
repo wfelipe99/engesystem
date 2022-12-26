@@ -16,6 +16,18 @@ export const roleRouter = router({
     let roles = await ctx.prisma.role.findMany()
     roles = roles.filter((role) => role.hierarchy <= (userRoles.roles[0]!.hierarchy as number))
 
-    return roles
+    const statesUFUnique = new Set<string>()
+    const rolesNamesUnique = new Set<string>()
+
+    for (const role of roles) {
+      statesUFUnique.add(role.UF)
+      rolesNamesUnique.add(role.name)
+    }
+
+    return {
+      statesUF: Array.from(statesUFUnique),
+      rolesNames: Array.from(rolesNamesUnique),
+      roles,
+    }
   }),
 })

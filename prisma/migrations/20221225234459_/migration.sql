@@ -44,7 +44,6 @@ CREATE TABLE "User" (
     "image" TEXT,
     "CPF" TEXT NOT NULL,
     "admissionDate" TIMESTAMPTZ NOT NULL,
-    "UF" TEXT NOT NULL,
     "bank" TEXT,
     "agency" TEXT,
     "account" TEXT,
@@ -58,6 +57,8 @@ CREATE TABLE "User" (
 CREATE TABLE "Role" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
+    "UF" TEXT NOT NULL,
+    "salary" DECIMAL(10,2) NOT NULL,
     "hierarchy" INTEGER NOT NULL,
 
     CONSTRAINT "Role_pkey" PRIMARY KEY ("id")
@@ -86,7 +87,10 @@ CREATE UNIQUE INDEX "Session_sessionToken_key" ON "Session"("sessionToken");
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Role_name_key" ON "Role"("name");
+CREATE UNIQUE INDEX "User_name_CPF_key" ON "User"("name", "CPF");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Role_name_UF_key" ON "Role"("name", "UF");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "VerificationToken_token_key" ON "VerificationToken"("token");

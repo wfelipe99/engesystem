@@ -1,19 +1,19 @@
 import { Flex, Heading, Input, FormControl, FormLabel, Container, Button, Stack, Select, Box } from '@chakra-ui/react'
 import type { NextPage } from 'next'
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { trpc } from '../../utils/trpc'
 import Head from 'next/head'
 import DayPicker from '../../components/DayPicker'
 import { Controller, useForm } from 'react-hook-form'
 import type { SubmitHandler } from 'react-hook-form'
+import { removeMultipleOcurrencesFromArray } from '../../utils/utils'
 
 type Inputs = {
   name: string
   email: string
-  roleName: string
+  roleId: string
   CPF: string
   admissionDate: Date
-  UF: string
   pixKey: string
   bank: string
   agency: string
@@ -21,28 +21,114 @@ type Inputs = {
   operation: string
 }
 
+const STATES_NAMES = {
+  AC: {
+    name: 'Acre',
+  },
+  AL: {
+    name: 'Alagoas',
+  },
+  AP: {
+    name: 'Amapá',
+  },
+  AM: {
+    name: 'Amazonas',
+  },
+  BA: {
+    name: 'Bahia',
+  },
+  CE: {
+    name: 'Ceará',
+  },
+  DF: {
+    name: 'Distrito Federal',
+  },
+  ES: {
+    name: 'Espírito Santo',
+  },
+  GO: {
+    name: 'Goiás',
+  },
+  MA: {
+    name: 'Maranhão',
+  },
+  MT: {
+    name: 'Mato Grosso',
+  },
+  MS: {
+    name: 'Mato Grosso do Sul',
+  },
+  MG: {
+    name: 'Minas Gerais',
+  },
+  PA: {
+    name: 'Pará',
+  },
+  PB: {
+    name: 'Paraíba',
+  },
+  PR: {
+    name: 'Paraná',
+  },
+  PE: {
+    name: 'Pernambuco',
+  },
+  PI: {
+    name: 'Piauí',
+  },
+  RJ: {
+    name: 'Rio de Janeiro',
+  },
+  RN: {
+    name: 'Rio Grande do Norte',
+  },
+  RS: {
+    name: 'Rio Grande do Sul',
+  },
+  RO: {
+    name: 'Rondônia',
+  },
+  RR: {
+    name: 'Roraima',
+  },
+  SC: {
+    name: 'Santa Catarina',
+  },
+  SP: {
+    name: 'São Paulo',
+  },
+  SE: {
+    name: 'Sergipe',
+  },
+  TO: {
+    name: 'Tocantins',
+  },
+}
+
 const Registrar: NextPage = () => {
   const [bankInfo, setBankInfo] = useState<string>('Banco')
+  const [selectedUF, setSelectedUF] = useState<string>('')
 
   const { register, handleSubmit, control } = useForm()
 
   const mutation = trpc.employee.register.useMutation()
-  const roles = trpc.role.getAll.useQuery()
+  const roleQuery = trpc.role.getAll.useQuery()
+
+  if (roleQuery.status === 'loading') return <div>Carregando...</div>
 
   const onSubmit: SubmitHandler<Inputs> = ({
     name,
     email,
-    roleName,
+    roleId,
     CPF,
     admissionDate,
-    UF,
     pixKey,
     bank,
     agency,
     account,
     operation,
   }) => {
-    mutation.mutate({ name, email, roleName, CPF, admissionDate, UF, pixKey, bank, agency, account, operation })
+    mutation.mutate({ name, email, roleId, CPF, admissionDate, pixKey, bank, agency, account, operation })
   }
 
   return (
@@ -69,13 +155,30 @@ const Registrar: NextPage = () => {
               </FormControl>
 
               <FormControl>
-                <FormLabel>Função</FormLabel>
-                <Select id="roleName" placeholder="Selecione uma função" {...register('roleName')}>
-                  {roles.data?.map((role) => (
-                    <option key={role.id} value={role.name}>
-                      {role.name}
+                <FormLabel>Estado</FormLabel>
+                <Select
+                  id="UF"
+                  placeholder="Selecione um estado"
+                  onChange={(e) => setSelectedUF(e.currentTarget.value)}
+                >
+                  {roleQuery.data?.statesUF.map((UF, index) => (
+                    <option key={index} value={UF}>
+                      {STATES_NAMES[UF].name}
                     </option>
                   ))}
+                </Select>
+              </FormControl>
+
+              <FormControl>
+                <FormLabel>Função</FormLabel>
+                <Select id="role" placeholder="Selecione uma função" {...register('roleId')}>
+                  {roleQuery.data?.roles
+                    .filter((role) => role.UF === selectedUF)
+                    .map((role) => (
+                      <option key={role.id} value={role.id}>
+                        {role.name}
+                      </option>
+                    ))}
                 </Select>
               </FormControl>
 
@@ -93,39 +196,6 @@ const Registrar: NextPage = () => {
                     <DayPicker selected={field.value} onSelect={(date: any) => field.onChange(date)} />
                   )}
                 />
-              </FormControl>
-
-              <FormControl>
-                <FormLabel>Estado</FormLabel>
-                <Select id="UF" placeholder="Selecione um estado" {...register('UF')}>
-                  <option value="AC">Acre</option>
-                  <option value="AL">Alagoas</option>
-                  <option value="AP">Amapá</option>
-                  <option value="AM">Amazonas</option>
-                  <option value="BA">Bahia</option>
-                  <option value="CE">Ceará</option>
-                  <option value="DF">Distrito Federal</option>
-                  <option value="ES">Espírito Santo</option>
-                  <option value="GO">Goiás</option>
-                  <option value="MA">Maranhão</option>
-                  <option value="MT">Mato Grosso</option>
-                  <option value="MS">Mato Grosso do Sul</option>
-                  <option value="MG">Minas Gerais</option>
-                  <option value="PA">Pará</option>
-                  <option value="PB">Paraíba</option>
-                  <option value="PR">Paraná</option>
-                  <option value="PE">Pernambuco</option>
-                  <option value="PI">Piauí</option>
-                  <option value="RJ">Rio de Janeiro</option>
-                  <option value="RN">Rio Grande do Norte</option>
-                  <option value="RS">Rio Grande do Sul</option>
-                  <option value="RO">Rondônia</option>
-                  <option value="RR">Roraima</option>
-                  <option value="SC">Santa Catarina</option>
-                  <option value="SP">São Paulo</option>
-                  <option value="SE">Sergipe</option>
-                  <option value="TO">Tocantins</option>
-                </Select>
               </FormControl>
 
               <FormControl>

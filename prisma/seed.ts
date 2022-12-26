@@ -3,20 +3,21 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 async function main() {
-  const CEO = await prisma.role.create({ data: { name: 'CEO', hierarchy: 3 } })
+  const CEO = await prisma.role.create({ data: { name: 'CEO', UF: 'PE', salary: 0, hierarchy: 3 } })
 
   const Administrativo = await prisma.role.create({
-    data: { name: 'Administrativo', hierarchy: 2 },
+    data: { name: 'Administrativo', UF: 'PE', salary: 1200.25, hierarchy: 2 },
   })
 
   const Apontador = await prisma.role.create({
-    data: { name: 'Apontador', hierarchy: 1 },
+    data: { name: 'Apontador', UF: 'PE', salary: 2000, hierarchy: 1 },
   })
 
   await prisma.role.createMany({
     data: [
-      { name: 'Carpinteiro', hierarchy: 0 },
-      { name: 'Servente', hierarchy: 0 },
+      { name: 'Carpinteiro', UF: 'PE', salary: 900, hierarchy: 0 },
+      { name: 'Servente', UF: 'PE', salary: 800.95, hierarchy: 0 },
+      { name: 'Servente', UF: 'AL', salary: 900.95, hierarchy: 0 },
     ],
   })
 
@@ -24,9 +25,8 @@ async function main() {
     data: {
       name: 'Caíque Müller',
       email: 'a@email.com',
-      CPF: 'a',
+      CPF: '1',
       admissionDate: new Date(),
-      UF: 'PE',
       bank: 'Caixa',
       agency: '123',
       account: '12336987-2',
@@ -42,9 +42,8 @@ async function main() {
     data: {
       name: 'Wevelly Felipe',
       email: 'b@email.com',
-      CPF: 'a',
+      CPF: '12',
       admissionDate: new Date(),
-      UF: 'PE',
       pixKey: '123',
       roles: {
         connect: { id: Administrativo.id },
@@ -56,9 +55,8 @@ async function main() {
     data: {
       name: 'Padrxn',
       email: 'c@email.com',
-      CPF: 'a',
+      CPF: '123',
       admissionDate: new Date(),
-      UF: 'PE',
       bank: 'Caixa',
       agency: '123',
       account: '12336987-2',
