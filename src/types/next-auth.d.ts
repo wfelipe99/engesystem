@@ -16,7 +16,7 @@ declare module 'next-auth' {
     include: { roles: true },
   })
 
-  type UserWithRoles = Prisma.UserGetPayload<typeof userWithRoles>
+  export type UserWithRoles = Prisma.UserGetPayload<typeof userWithRoles>
 
   interface Session {
     user?: UserWithRoles & DefaultSession['user']

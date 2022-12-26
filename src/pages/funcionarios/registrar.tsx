@@ -1,12 +1,11 @@
 import { Flex, Heading, Input, FormControl, FormLabel, Container, Button, Stack, Select, Box } from '@chakra-ui/react'
 import type { NextPage } from 'next'
-import { useEffect, useMemo, useState } from 'react'
+import { useState } from 'react'
 import { trpc } from '../../utils/trpc'
 import Head from 'next/head'
 import DayPicker from '../../components/DayPicker'
 import { Controller, useForm } from 'react-hook-form'
 import type { SubmitHandler } from 'react-hook-form'
-import { removeMultipleOcurrencesFromArray } from '../../utils/utils'
 
 type Inputs = {
   name: string

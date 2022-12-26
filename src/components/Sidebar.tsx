@@ -30,7 +30,7 @@ export default function Sidebar() {
           <ListItem>
             <HStack>
               <ListIcon as={TbHierarchy2} />
-              <Text fontWeight="bold">Cargos</Text>
+              <Text fontWeight="bold">Funções</Text>
             </HStack>
 
             <UnorderedList listStyleType="none">

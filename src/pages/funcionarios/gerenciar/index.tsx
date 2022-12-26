@@ -11,13 +11,30 @@ import { AG_GRID_LOCALE_PT_BR } from '../../../utils/utils'
 import { useRouter } from 'next/router'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
+import { CellDoubleClickedEvent, ColDef, FieldElement, Grid } from 'ag-grid-community'
+
+import type { UserWithRoles } from 'next-auth'
+import type { Role } from '@prisma/client'
+
+type User = {
+  UF: Pick<Role, 'UF'>
+  name: Pick<UserWithRoles, 'name'>
+  role: Pick<Role, 'name'>
+  admissionDate: Pick<UserWithRoles, 'admissionDate'>
+}
 
 const Gerenciar: NextPage = () => {
   const router = useRouter()
 
-  const tableFields = [
-    { field: 'UF', filter: true },
-    { field: 'name', headerName: 'Nome', filter: true },
+  const tableFields: ColDef<User>[] = [
+    {
+      valueGetter: (params) => {
+        return params.data.roles[0].UF
+      },
+      headerName: 'UF',
+      filter: true,
+    },
+    { field: 'name', headerName: 'Nome', filter: true, sort: 'asc' },
     {
       valueGetter: (params) => {
         return params.data.roles[0].name
@@ -27,8 +44,7 @@ const Gerenciar: NextPage = () => {
     },
     {
       valueGetter: (params) => {
-        const a = format(params.data.admissionDate, "d 'de' MMMM 'de' u", { locale: ptBR })
-        return a
+        return format(params.data.admissionDate, "d 'de' MMMM 'de' u", { locale: ptBR })
       },
       headerName: 'Data de Admissão',
       filter: true,
@@ -43,22 +59,20 @@ const Gerenciar: NextPage = () => {
   const [columnDefs, setColumnDefs] = useState(tableFields)
 
   // DefaultColDef sets props common to all Columns
-  const defaultColDef = useMemo(() => ({
-    sortable: true,
-  }))
+  const defaultColDef = useMemo(
+    () => ({
+      sortable: true,
+    }),
+    []
+  )
 
   // Example of consuming Grid Event
   const cellDoubleClickedListener = useCallback(
-    (event) => {
+    (event: CellDoubleClickedEvent) => {
       router.push(`/funcionarios/gerenciar/${event.data.id}`)
     },
     [router]
   )
-
-  // Example using Grid's API
-  const buttonListener = useCallback((e) => {
-    gridRef.current.api.deselectAll()
-  }, [])
 
   return (
     <Container maxW="container.lg">
