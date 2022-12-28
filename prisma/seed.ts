@@ -21,6 +21,13 @@ async function main() {
     ],
   })
 
+  const discountSindicato = await prisma.discount.create({ data: { name: 'Sindicato', value: 0.02 } })
+  const discountAlimentacao = await prisma.discount.create({ data: { name: 'Alimentação', value: 0.03 } })
+  const discountPassagem = await prisma.discount.create({ data: { name: 'Passagem', value: 0.06 } })
+
+  const constructionHospital = await prisma.construction.create({ data: { name: 'Hospital', UF: 'PE' } })
+  const constructionAlvenaria = await prisma.construction.create({ data: { name: 'Alvenaria', UF: 'AL' } })
+
   await prisma.user.create({
     data: {
       name: 'Caíque Müller',
@@ -35,6 +42,8 @@ async function main() {
       roles: {
         connect: { id: CEO.id },
       },
+      discounts: { connect: { id: discountSindicato.id } },
+      constructions: { connect: { id: constructionHospital.id } },
     },
   })
 
@@ -48,6 +57,8 @@ async function main() {
       roles: {
         connect: { id: Administrativo.id },
       },
+      discounts: { connect: [{ id: discountAlimentacao.id }, { id: discountPassagem.id }] },
+      constructions: { connect: { id: constructionAlvenaria.id } },
     },
   })
 
@@ -65,6 +76,7 @@ async function main() {
       roles: {
         connect: { id: Apontador.id },
       },
+      constructions: { connect: { id: constructionHospital.id } },
     },
   })
 }

@@ -7,6 +7,36 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UF {
+  AC
+  AL
+  AP
+  AM
+  BA
+  CE
+  DF
+  ES
+  GO
+  MA
+  MT
+  MS
+  MG
+  PA
+  PB
+  PR
+  PE
+  PI
+  RJ
+  RN
+  RS
+  RO
+  RR
+  SC
+  SP
+  SE
+  TO
+}
+
 model Example {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -40,21 +70,26 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String
-  email         String    @unique
-  emailVerified DateTime?
-  image         String?
-  CPF           String
-  admissionDate DateTime  @db.Timestamptz()
-  bank          String?
-  agency        String?
-  account       String?
-  operation     String?
-  pixKey        String?
-  accounts      Account[]
-  sessions      Session[]
-  roles         Role[]
+  id                     String           @id @default(cuid())
+  name                   String
+  email                  String           @unique
+  emailVerified          DateTime?
+  image                  String?
+  CPF                    String
+  admissionDate          DateTime         @db.Timestamptz()
+  bank                   String?
+  agency                 String?
+  account                String?
+  operation              String?
+  pixKey                 String?
+  accounts               Account[]
+  sessions               Session[]
+  roles                  Role[]
+  variableMoney          VariableMoney[]
+  discounts              Discount[]
+  constructions          Construction[]
+  receivedMoneyInAdvance MoneyInAdvance[]
+  overTimeWork           OverTimeWork[]
 
   @@unique([name, CPF])
 }
@@ -62,7 +97,7 @@ model User {
 model Role {
   id        String  @id @default(cuid())
   name      String
-  UF        String
+  UF        UF
   salary    Decimal @db.Decimal(10, 2)
   // WARNING: Any modification to this values, change it on TypeScript side too,
   // which is in utils/utils.ts
@@ -71,10 +106,63 @@ model Role {
   // 1: Apontador
   // 2: Administrativo
   // 3: CEO
-  hierarchy Int
-  users     User[]
+  hierarchy Int     @default(0)
+  workers   User[]
 
   @@unique([name, UF])
+}
+
+model Discount {
+  id    String  @id @default(cuid())
+  name  String  @unique
+  value Decimal @db.Decimal(10, 2)
+  user  User[]
+}
+
+model Construction {
+  id         String    @id @default(cuid())
+  overTimeId String?
+  name       String
+  UF         UF
+  workers    User[]
+  overTime   OverTime? @relation(fields: [overTimeId], references: [id])
+
+  @@unique([name, UF])
+}
+
+model VariableMoney {
+  id               String   @id @default(cuid())
+  userId           String
+  payedAt          DateTime
+  productionSalary Decimal  @db.Decimal(10, 2)
+  bonus            Decimal  @db.Decimal(10, 2)
+  worker           User     @relation(fields: [userId], references: [id])
+}
+
+model MoneyInAdvance {
+  id          String   @id @default(cuid())
+  userId      String
+  payedAt     DateTime
+  value       Decimal  @db.Decimal(10, 2)
+  description String
+  worker      User     @relation(fields: [userId], references: [id])
+}
+
+model OverTime {
+  id                 String         @id @default(cuid())
+  overTimeWorkId     String         @unique
+  percentageOnSalary Decimal        @db.Decimal(10, 2)
+  constructions      Construction[]
+  overTimeWork       OverTimeWork   @relation(fields: [overTimeWorkId], references: [id])
+}
+
+model OverTimeWork {
+  id           String    @id @default(cuid())
+  userId       String
+  payedAt      DateTime
+  hours        Int
+  overTimeInfo OverTime?
+  worker       User      @relation(fields: [userId], references: [id])
 }
 
 model VerificationToken {

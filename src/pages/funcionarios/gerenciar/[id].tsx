@@ -41,7 +41,7 @@ const GerenciarFuncionario = () => {
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     console.log(data)
   }
-
+  // TODO: Make it with Editable component, so I won't need to create a "Editar" tab
   return (
     <Container>
       <Link href="/funcionarios/gerenciar" passHref>

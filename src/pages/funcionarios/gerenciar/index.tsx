@@ -11,7 +11,7 @@ import { AG_GRID_LOCALE_PT_BR } from '../../../utils/utils'
 import { useRouter } from 'next/router'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { CellDoubleClickedEvent, ColDef, FieldElement, Grid } from 'ag-grid-community'
+import type { CellDoubleClickedEvent, ColDef } from 'ag-grid-community'
 
 import type { UserWithRoles } from 'next-auth'
 import type { Role } from '@prisma/client'
@@ -59,7 +59,7 @@ const Gerenciar: NextPage = () => {
   const gridRef = useRef() // Optional - for accessing Grid's API
 
   // Each Column Definition results in one Column.
-  const [columnDefs, setColumnDefs] = useState(tableFields)
+  const [columnDefs] = useState(tableFields)
 
   // DefaultColDef sets props common to all Columns
   const defaultColDef = useMemo(

@@ -1,5 +1,6 @@
 import { TRPCError } from '@trpc/server'
-import { Role } from '../../../utils/utils'
+import { z } from 'zod'
+import { Role, ZOD_UF_ENUM } from '../../../utils/utils'
 
 import { router, protectedProcedure } from '../trpc'
 
@@ -30,4 +31,31 @@ export const roleRouter = router({
       roles,
     }
   }),
+
+  create: protectedProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        UF: ZOD_UF_ENUM,
+        salary: z.coerce.number(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const userSession = ctx.session.user
+
+      const user = await ctx.prisma.user.findUniqueOrThrow({ where: { id: userSession.id }, select: { roles: true } })
+      const userRole = user.roles[0]
+
+      const { name, UF, salary } = input
+
+      if (!userRole || userRole.hierarchy < Role.Administrativo) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' })
+      }
+
+      await ctx.prisma.role.create({ data: { name, UF, salary, hierarchy: 0 } })
+
+      return {
+        successfulMessage: 'Função criada.',
+      }
+    }),
 })

@@ -35,7 +35,7 @@ export default function Sidebar() {
 
             <UnorderedList listStyleType="none">
               <Box ml="8">
-                <ListItem>Criar</ListItem>
+                <Link href="/funcoes/criar">Criar</Link>
                 <ListItem>Gerenciar</ListItem>
               </Box>
             </UnorderedList>

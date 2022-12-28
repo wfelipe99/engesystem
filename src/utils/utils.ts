@@ -1,3 +1,5 @@
+import { z } from 'zod'
+
 export enum Role {
   Apontador = 1,
   Administrativo,
@@ -319,3 +321,119 @@ export const AG_GRID_LOCALE_PT_BR = {
   thousandSeparator: '.',
   decimalSeparator: ',',
 }
+
+export const STATES_NAMES = {
+  AC: {
+    name: 'Acre',
+  },
+  AL: {
+    name: 'Alagoas',
+  },
+  AP: {
+    name: 'Amapá',
+  },
+  AM: {
+    name: 'Amazonas',
+  },
+  BA: {
+    name: 'Bahia',
+  },
+  CE: {
+    name: 'Ceará',
+  },
+  DF: {
+    name: 'Distrito Federal',
+  },
+  ES: {
+    name: 'Espírito Santo',
+  },
+  GO: {
+    name: 'Goiás',
+  },
+  MA: {
+    name: 'Maranhão',
+  },
+  MT: {
+    name: 'Mato Grosso',
+  },
+  MS: {
+    name: 'Mato Grosso do Sul',
+  },
+  MG: {
+    name: 'Minas Gerais',
+  },
+  PA: {
+    name: 'Pará',
+  },
+  PB: {
+    name: 'Paraíba',
+  },
+  PR: {
+    name: 'Paraná',
+  },
+  PE: {
+    name: 'Pernambuco',
+  },
+  PI: {
+    name: 'Piauí',
+  },
+  RJ: {
+    name: 'Rio de Janeiro',
+  },
+  RN: {
+    name: 'Rio Grande do Norte',
+  },
+  RS: {
+    name: 'Rio Grande do Sul',
+  },
+  RO: {
+    name: 'Rondônia',
+  },
+  RR: {
+    name: 'Roraima',
+  },
+  SC: {
+    name: 'Santa Catarina',
+  },
+  SP: {
+    name: 'São Paulo',
+  },
+  SE: {
+    name: 'Sergipe',
+  },
+  TO: {
+    name: 'Tocantins',
+  },
+}
+
+export const ZOD_UF_ENUM = z.enum([
+  'AC',
+  'AL',
+  'AP',
+  'AM',
+  'BA',
+  'CE',
+  'DF',
+  'ES',
+  'GO',
+  'MA',
+  'MT',
+  'MS',
+  'MG',
+  'PA',
+  'PB',
+  'PR',
+  'PE',
+  'PI',
+  'RJ',
+  'RN',
+  'RS',
+  'RO',
+  'RR',
+  'SC',
+  'SP',
+  'SC',
+  'SP',
+  'SE',
+  'TO',
+])

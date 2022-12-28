@@ -1,4 +1,4 @@
-import { Flex, Heading, Input, FormControl, FormLabel, Container, Button, Stack, Select, Box } from '@chakra-ui/react'
+import { Flex, Heading, Input, FormControl, FormLabel, Container, Button, Stack, Select } from '@chakra-ui/react'
 import type { NextPage } from 'next'
 import { useState } from 'react'
 import { trpc } from '../../utils/trpc'
@@ -6,6 +6,7 @@ import Head from 'next/head'
 import DayPicker from '../../components/DayPicker'
 import { Controller, useForm } from 'react-hook-form'
 import type { SubmitHandler } from 'react-hook-form'
+import { STATES_NAMES } from '../../utils/utils'
 
 type Inputs = {
   name: string
@@ -18,90 +19,6 @@ type Inputs = {
   agency: string
   account: string
   operation: string
-}
-
-const STATES_NAMES = {
-  AC: {
-    name: 'Acre',
-  },
-  AL: {
-    name: 'Alagoas',
-  },
-  AP: {
-    name: 'Amapá',
-  },
-  AM: {
-    name: 'Amazonas',
-  },
-  BA: {
-    name: 'Bahia',
-  },
-  CE: {
-    name: 'Ceará',
-  },
-  DF: {
-    name: 'Distrito Federal',
-  },
-  ES: {
-    name: 'Espírito Santo',
-  },
-  GO: {
-    name: 'Goiás',
-  },
-  MA: {
-    name: 'Maranhão',
-  },
-  MT: {
-    name: 'Mato Grosso',
-  },
-  MS: {
-    name: 'Mato Grosso do Sul',
-  },
-  MG: {
-    name: 'Minas Gerais',
-  },
-  PA: {
-    name: 'Pará',
-  },
-  PB: {
-    name: 'Paraíba',
-  },
-  PR: {
-    name: 'Paraná',
-  },
-  PE: {
-    name: 'Pernambuco',
-  },
-  PI: {
-    name: 'Piauí',
-  },
-  RJ: {
-    name: 'Rio de Janeiro',
-  },
-  RN: {
-    name: 'Rio Grande do Norte',
-  },
-  RS: {
-    name: 'Rio Grande do Sul',
-  },
-  RO: {
-    name: 'Rondônia',
-  },
-  RR: {
-    name: 'Roraima',
-  },
-  SC: {
-    name: 'Santa Catarina',
-  },
-  SP: {
-    name: 'São Paulo',
-  },
-  SE: {
-    name: 'Sergipe',
-  },
-  TO: {
-    name: 'Tocantins',
-  },
 }
 
 const Registrar: NextPage = () => {

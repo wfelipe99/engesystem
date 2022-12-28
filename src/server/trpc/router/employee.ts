@@ -21,19 +21,20 @@ export const employeeRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const user = ctx.session.user
+      const userSession = ctx.session.user
 
-      const userRoles = await ctx.prisma.user.findUnique({ where: { id: user.id }, select: { roles: true } })
+      const user = await ctx.prisma.user.findUniqueOrThrow({ where: { id: userSession.id }, select: { roles: true } })
+      const userRole = user.roles[0]
 
       const { name, email, roleId, CPF, admissionDate, pixKey, bank, agency, account, operation } = input
 
-      if (!userRoles || !userRoles.roles[0] || userRoles.roles[0].hierarchy < Role.Administrativo) {
+      if (!userRole || userRole.hierarchy < Role.Administrativo) {
         throw new TRPCError({ code: 'UNAUTHORIZED' })
       }
 
       const userBeingRegisteredRole = await ctx.prisma.role.findUnique({ where: { id: roleId } })
 
-      if (!userBeingRegisteredRole || userRoles.roles[0].hierarchy < userBeingRegisteredRole.hierarchy) {
+      if (!userBeingRegisteredRole || userRole.hierarchy < userBeingRegisteredRole.hierarchy) {
         throw new TRPCError({ code: 'UNAUTHORIZED' })
       }
 
@@ -58,11 +59,12 @@ export const employeeRouter = router({
     }),
 
   getAll: protectedProcedure.query(async ({ ctx }) => {
-    const user = ctx.session.user
+    const userSession = ctx.session.user
 
-    const userRoles = await ctx.prisma.user.findUnique({ where: { id: user.id }, select: { roles: true } })
+    const user = await ctx.prisma.user.findUniqueOrThrow({ where: { id: userSession.id }, select: { roles: true } })
+    const userRole = user.roles[0]
 
-    if (!userRoles || !userRoles.roles[0] || userRoles.roles[0].hierarchy < Role.Administrativo) {
+    if (!userRole || userRole.hierarchy < Role.Administrativo) {
       throw new TRPCError({ code: 'UNAUTHORIZED' })
     }
 
@@ -76,11 +78,12 @@ export const employeeRouter = router({
       })
     )
     .query(async ({ ctx, input }) => {
-      const user = ctx.session.user
+      const userSession = ctx.session.user
 
-      const userRoles = await ctx.prisma.user.findUnique({ where: { id: user.id }, select: { roles: true } })
+      const user = await ctx.prisma.user.findUniqueOrThrow({ where: { id: userSession.id }, select: { roles: true } })
+      const userRole = user.roles[0]
 
-      if (!userRoles || !userRoles.roles[0] || userRoles.roles[0].hierarchy < Role.Administrativo) {
+      if (!userRole || userRole.hierarchy < Role.Administrativo) {
         throw new TRPCError({ code: 'UNAUTHORIZED' })
       }
 
