@@ -1,7 +1,7 @@
 import { Box, UnorderedList, ListItem, Stack, ListIcon, Text, HStack } from '@chakra-ui/react'
 import { BsFillPeopleFill } from 'react-icons/bs'
 import { TbHierarchy2 } from 'react-icons/tb'
-import { CiMoneyBill } from 'react-icons/ci'
+import { HiBuildingOffice2 } from 'react-icons/hi2'
 import Link from 'next/link'
 
 export default function Sidebar() {
@@ -40,9 +40,23 @@ export default function Sidebar() {
               </Box>
             </UnorderedList>
           </ListItem>
-          <ListItem fontWeight="bold">
-            <ListIcon as={CiMoneyBill} />
-            Faturas
+
+          <ListItem>
+            <HStack>
+              <ListIcon as={HiBuildingOffice2} />
+              <Text fontWeight="bold">Obras</Text>
+            </HStack>
+
+            <UnorderedList listStyleType="none">
+              <Box ml="8">
+                <ListItem>
+                  <Link href="/obras/criar">Criar</Link>
+                </ListItem>
+                <ListItem>
+                  <Link href="/obras/gerenciar">Gerenciar</Link>
+                </ListItem>
+              </Box>
+            </UnorderedList>
           </ListItem>
         </Stack>
       </UnorderedList>

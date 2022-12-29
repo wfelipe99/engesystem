@@ -1,9 +1,4 @@
 import {
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
   Container,
   FormControl,
   FormLabel,
@@ -13,6 +8,7 @@ import {
   Stack,
   Select,
   Button,
+  FormHelperText,
 } from '@chakra-ui/react'
 import { useForm } from 'react-hook-form'
 import type { SubmitHandler } from 'react-hook-form'
@@ -20,6 +16,7 @@ import type { NextPage } from 'next'
 import { trpc } from '../../utils/trpc'
 import type { ZOD_UF_ENUM } from '../../utils/utils'
 import type { z } from 'zod'
+import EmployeeTable from '../../components/EmployeeTable'
 
 type Inputs = {
   name: string
@@ -27,19 +24,22 @@ type Inputs = {
   salary: number
 }
 
-const CriarFuncao: NextPage = () => {
+const CriarObra: NextPage = () => {
   const { register, handleSubmit } = useForm()
 
+  const { data: rowData, status } = trpc.employee.getAll.useQuery()
   const mutation = trpc.role.create.useMutation()
 
   const onSubmit: SubmitHandler<Inputs> = ({ name, UF, salary }) => {
     mutation.mutate({ name, UF, salary })
   }
 
+  if (status === 'loading') return <div>Carregando table...</div>
+
   return (
     <Container maxW="container.lg">
       <Flex align="center" direction="column">
-        <Heading as="h2">Criar Função</Heading>
+        <Heading as="h2">Criar Obra</Heading>
 
         <Stack w="100%">
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -82,14 +82,9 @@ const CriarFuncao: NextPage = () => {
             </FormControl>
 
             <FormControl>
-              <FormLabel>Salário</FormLabel>
-              <NumberInput defaultValue={0} precision={2} step={0.2}>
-                <NumberInputField {...register('salary')} />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
+              <FormLabel>Funcionários</FormLabel>
+              <FormHelperText>Selecione os funcionários a serem alocados para esta obra</FormHelperText>
+              <EmployeeTable rowData={rowData} />
             </FormControl>
 
             <Button type="submit" colorScheme="blue">
@@ -102,4 +97,4 @@ const CriarFuncao: NextPage = () => {
   )
 }
 
-export default CriarFuncao
+export default CriarObra

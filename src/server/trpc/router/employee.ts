@@ -2,7 +2,7 @@ import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 import { Role } from '../../../utils/utils'
 
-import { router, protectedProcedure } from '../trpc'
+import { router, protectedProcedure, isUserAuthorized } from '../trpc'
 
 export const employeeRouter = router({
   register: protectedProcedure
@@ -21,20 +21,16 @@ export const employeeRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const userSession = ctx.session.user
-
-      const user = await ctx.prisma.user.findUniqueOrThrow({ where: { id: userSession.id }, select: { roles: true } })
-      const userRole = user.roles[0]
-
-      const { name, email, roleId, CPF, admissionDate, pixKey, bank, agency, account, operation } = input
-
-      if (!userRole || userRole.hierarchy < Role.Administrativo) {
+      if (!isUserAuthorized(ctx, Role.Administrativo)) {
         throw new TRPCError({ code: 'UNAUTHORIZED' })
       }
 
-      const userBeingRegisteredRole = await ctx.prisma.role.findUnique({ where: { id: roleId } })
+      const { name, email, roleId, CPF, admissionDate, pixKey, bank, agency, account, operation } = input
+      const userRole = ctx.session.user.roles[0]
 
-      if (!userBeingRegisteredRole || userRole.hierarchy < userBeingRegisteredRole.hierarchy) {
+      const userBeingRegisteredRole = await ctx.prisma.role.findUniqueOrThrow({ where: { id: roleId } })
+
+      if (!userRole || userRole.hierarchy < userBeingRegisteredRole.hierarchy) {
         throw new TRPCError({ code: 'UNAUTHORIZED' })
       }
 
