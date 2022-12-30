@@ -4,13 +4,17 @@ import { Role, ZOD_UF_ENUM } from '../../../utils/utils'
 
 import { router, protectedProcedure, isUserAuthorized } from '../trpc'
 
-export const roleRouter = router({
+export const constructionRouter = router({
   create: protectedProcedure
     .input(
       z.object({
         name: z.string(),
         UF: ZOD_UF_ENUM,
-        workersId: z.array(z.string()),
+        workersId: z.array(
+          z.object({
+            id: z.string(),
+          })
+        ),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -25,7 +29,7 @@ export const roleRouter = router({
           name,
           UF,
           workers: {
-            connect: workersId.map((workerId) => ({ id: workerId })),
+            connect: workersId,
           },
         },
       })
@@ -33,5 +37,29 @@ export const roleRouter = router({
       return {
         successfulMessage: 'Obra criada.',
       }
+    }),
+
+  getAll: protectedProcedure.query(async ({ ctx }) => {
+    if (!isUserAuthorized(ctx, Role.Administrativo)) {
+      throw new TRPCError({ code: 'UNAUTHORIZED' })
+    }
+
+    return ctx.prisma.construction.findMany()
+  }),
+
+  getById: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      if (!isUserAuthorized(ctx, Role.Administrativo)) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' })
+      }
+
+      const { id } = input
+
+      return ctx.prisma.construction.findUniqueOrThrow({ where: { id } })
     }),
 })

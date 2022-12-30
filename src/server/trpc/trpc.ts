@@ -46,7 +46,7 @@ export const protectedProcedure = t.procedure.use(isAuthed)
  * @param ctx Context
  * @param necessaryRoleLevel - 0: impossible to access the system; 1: Apontador; 2: Administrativo; 3: CEO
  */
-export async function isUserAuthorized(ctx: Context, necessaryRoleLevel: number) {
+export async function isUserAuthorized(ctx: Context, minimumNecessaryRoleLevel: number) {
   if (!ctx.session || !ctx.session.user) {
     return false
   }
@@ -56,7 +56,7 @@ export async function isUserAuthorized(ctx: Context, necessaryRoleLevel: number)
   const user = await ctx.prisma.user.findUniqueOrThrow({ where: { id: userSession.id }, select: { roles: true } })
   const userRole = user.roles[0]
 
-  if (!userRole || userRole.hierarchy < necessaryRoleLevel) {
+  if (!userRole || userRole.hierarchy < minimumNecessaryRoleLevel) {
     return false
   }
 

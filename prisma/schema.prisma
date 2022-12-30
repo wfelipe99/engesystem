@@ -113,10 +113,10 @@ model Role {
 }
 
 model Discount {
-  id    String  @id @default(cuid())
-  name  String  @unique
-  value Decimal @db.Decimal(10, 2)
-  user  User[]
+  id              String  @id @default(cuid())
+  name            String  @unique
+  percentOnSalary Decimal @db.Decimal(10, 2)
+  user            User[]
 }
 
 model Construction {
@@ -149,20 +149,20 @@ model MoneyInAdvance {
 }
 
 model OverTime {
-  id                 String         @id @default(cuid())
-  overTimeWorkId     String         @unique
-  percentageOnSalary Decimal        @db.Decimal(10, 2)
-  constructions      Construction[]
-  overTimeWork       OverTimeWork   @relation(fields: [overTimeWorkId], references: [id])
+  id                  String         @id @default(cuid())
+  percentOnWorkedHour Decimal        @db.Decimal(10, 2)
+  constructions       Construction[]
+  overTimeWork        OverTimeWork[]
 }
 
 model OverTimeWork {
-  id           String    @id @default(cuid())
+  id           String   @id @default(cuid())
   userId       String
+  overTimeId   String
   payedAt      DateTime
   hours        Int
-  overTimeInfo OverTime?
-  worker       User      @relation(fields: [userId], references: [id])
+  overTimeInfo OverTime @relation(fields: [overTimeId], references: [id])
+  worker       User     @relation(fields: [userId], references: [id])
 }
 
 model VerificationToken {

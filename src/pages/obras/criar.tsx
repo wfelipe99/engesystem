@@ -16,22 +16,23 @@ import type { NextPage } from 'next'
 import { trpc } from '../../utils/trpc'
 import type { ZOD_UF_ENUM } from '../../utils/utils'
 import type { z } from 'zod'
-import EmployeeTable from '../../components/EmployeeTable'
+import EmployeeTable, { selectedRowsAtom } from '../../components/EmployeeTable'
+import { useAtom } from 'jotai'
 
 type Inputs = {
   name: string
   UF: z.infer<typeof ZOD_UF_ENUM>
-  salary: number
 }
 
 const CriarObra: NextPage = () => {
   const { register, handleSubmit } = useForm()
+  const [selectedRows] = useAtom(selectedRowsAtom)
 
   const { data: rowData, status } = trpc.employee.getAll.useQuery()
-  const mutation = trpc.role.create.useMutation()
+  const mutation = trpc.construction.create.useMutation()
 
-  const onSubmit: SubmitHandler<Inputs> = ({ name, UF, salary }) => {
-    mutation.mutate({ name, UF, salary })
+  const onSubmit: SubmitHandler<Inputs> = ({ name, UF }) => {
+    mutation.mutate({ name, UF, workersId: selectedRows.map((worker) => ({ id: worker.id })) })
   }
 
   if (status === 'loading') return <div>Carregando table...</div>
@@ -84,7 +85,7 @@ const CriarObra: NextPage = () => {
             <FormControl>
               <FormLabel>Funcionários</FormLabel>
               <FormHelperText>Selecione os funcionários a serem alocados para esta obra</FormHelperText>
-              <EmployeeTable rowData={rowData} />
+              <EmployeeTable rowData={rowData} showCheckBox={true} />
             </FormControl>
 
             <Button type="submit" colorScheme="blue">

@@ -1,23 +1,15 @@
 import { AgGridReact } from 'ag-grid-react' // the AG Grid React Component
-import type { CellDoubleClickedEvent, ColDef, SelectionChangedEvent } from 'ag-grid-community'
+import type { CellDoubleClickedEvent, ColDef } from 'ag-grid-community'
 import 'ag-grid-community/styles/ag-grid.css' // Core grid CSS, always needed
 import 'ag-grid-community/styles/ag-theme-alpine.css' // Optional theme CSS
-import type { UserWithRoles } from 'next-auth'
-import type { Role, User as UserPrisma } from '@prisma/client'
-import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
+import type { Construction as ConstructionPrisma } from '@prisma/client'
 import { useRouter } from 'next/router'
 import { useState, useRef, useMemo, useCallback } from 'react'
 import { AG_GRID_LOCALE_PT_BR } from '../utils/utils'
-import { atom, useAtom } from 'jotai'
 
-export const selectedRowsAtom = atom<UserWithRoles[]>([])
-
-type User = {
-  UF: Pick<Role, 'UF'>
-  name: Pick<UserWithRoles, 'name'>
-  role: Pick<Role, 'name'>
-  admissionDate: Pick<UserWithRoles, 'admissionDate'>
+type Construction = {
+  name: Pick<ConstructionPrisma, 'name'>
+  UF: Pick<ConstructionPrisma, 'UF'>
 }
 
 type Props = {
@@ -25,29 +17,16 @@ type Props = {
   showCheckBox?: boolean
 }
 
-export default function EmployeeTable({ rowData, showCheckBox = false }: Props) {
+export default function ConstructionTable({ rowData, showCheckBox = false }: Props) {
   const router = useRouter()
-  const [, setSelectedRows] = useAtom(selectedRowsAtom)
 
-  const tableFields: ColDef<User>[] = [
+  const tableFields: ColDef<Construction>[] = [
     { field: 'name', headerName: 'Nome', sort: 'asc', checkboxSelection: showCheckBox },
     {
       valueGetter: (params) => {
-        return params.data.roles[0].name
-      },
-      headerName: 'Função',
-    },
-    {
-      valueGetter: (params) => {
-        return params.data.roles[0].UF
+        return params.data.UF
       },
       headerName: 'UF',
-    },
-    {
-      valueGetter: (params) => {
-        return format(params.data.admissionDate, "d 'de' MMMM 'de' u", { locale: ptBR })
-      },
-      headerName: 'Data de Admissão',
     },
   ]
 
@@ -69,16 +48,9 @@ export default function EmployeeTable({ rowData, showCheckBox = false }: Props) 
   // Example of consuming Grid Event
   const cellDoubleClickedListener = useCallback(
     (e: CellDoubleClickedEvent) => {
-      router.push(`/funcionarios/gerenciar/${e.data.id}`)
+      router.push(`/obras/gerenciar/${e.data.id}`)
     },
     [router]
-  )
-
-  const selectionChangedListener = useCallback(
-    (e: SelectionChangedEvent) => {
-      setSelectedRows(e.api.getSelectedRows())
-    },
-    [setSelectedRows]
   )
 
   return (
@@ -97,8 +69,6 @@ export default function EmployeeTable({ rowData, showCheckBox = false }: Props) 
           rowSelection="multiple" // Options - allows click selection of rows
           onRowDoubleClicked={cellDoubleClickedListener}
           localeText={AG_GRID_LOCALE_PT_BR}
-          enableCellTextSelection
-          onSelectionChanged={selectionChangedListener}
         />
       </div>
     </div>

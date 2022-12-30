@@ -13,22 +13,25 @@ async function main() {
     data: { name: 'Apontador', UF: 'PE', salary: 2000, hierarchy: 1 },
   })
 
+  const Servente = await prisma.role.create({
+    data: { name: 'Servente', UF: 'PE', salary: 2500, hierarchy: 0 },
+  })
+
   await prisma.role.createMany({
     data: [
       { name: 'Carpinteiro', UF: 'PE', salary: 900, hierarchy: 0 },
-      { name: 'Servente', UF: 'PE', salary: 800.95, hierarchy: 0 },
       { name: 'Servente', UF: 'AL', salary: 900.95, hierarchy: 0 },
     ],
   })
 
-  const discountSindicato = await prisma.discount.create({ data: { name: 'Sindicato', value: 0.02 } })
-  const discountAlimentacao = await prisma.discount.create({ data: { name: 'Alimentação', value: 0.03 } })
-  const discountPassagem = await prisma.discount.create({ data: { name: 'Passagem', value: 0.06 } })
+  const discountSindicato = await prisma.discount.create({ data: { name: 'Sindicato', percentOnSalary: 0.02 } })
+  const discountAlimentacao = await prisma.discount.create({ data: { name: 'Alimentação', percentOnSalary: 0.03 } })
+  const discountPassagem = await prisma.discount.create({ data: { name: 'Passagem', percentOnSalary: 0.06 } })
 
   const constructionHospital = await prisma.construction.create({ data: { name: 'Hospital', UF: 'PE' } })
   const constructionAlvenaria = await prisma.construction.create({ data: { name: 'Alvenaria', UF: 'AL' } })
 
-  await prisma.user.create({
+  const Caique = await prisma.user.create({
     data: {
       name: 'Caíque Müller',
       email: 'a@email.com',
@@ -47,7 +50,7 @@ async function main() {
     },
   })
 
-  await prisma.user.create({
+  const Felipe = await prisma.user.create({
     data: {
       name: 'Wevelly Felipe',
       email: 'b@email.com',
@@ -62,7 +65,7 @@ async function main() {
     },
   })
 
-  await prisma.user.create({
+  const Padrxn = await prisma.user.create({
     data: {
       name: 'Padrxn',
       email: 'c@email.com',
@@ -77,6 +80,64 @@ async function main() {
         connect: { id: Apontador.id },
       },
       constructions: { connect: { id: constructionHospital.id } },
+    },
+  })
+
+  const Zezinho = await prisma.user.create({
+    data: {
+      name: 'Zezinho',
+      email: 'd@email.com',
+      CPF: '123',
+      admissionDate: new Date(),
+      pixKey: 'asd49as84f98af',
+      roles: {
+        connect: { id: Servente.id },
+      },
+      constructions: { connect: { id: constructionHospital.id } },
+      discounts: { connect: [{ id: discountAlimentacao.id }, { id: discountPassagem.id }] },
+    },
+  })
+
+  await prisma.variableMoney.create({
+    data: { payedAt: new Date(), productionSalary: 3000, bonus: 400, worker: { connect: { id: Zezinho.id } } },
+  })
+
+  await prisma.moneyInAdvance.create({
+    data: {
+      payedAt: new Date(),
+      value: 3000,
+      description: 'Pegou para fazer x coisa',
+      worker: { connect: { id: Zezinho.id } },
+    },
+  })
+
+  const overTime60Percent = await prisma.overTime.create({
+    data: {
+      percentOnWorkedHour: 0.6,
+      constructions: {
+        connect: { id: constructionHospital.id },
+      },
+    },
+  })
+  const overTime100Percent = await prisma.overTime.create({
+    data: { percentOnWorkedHour: 1.0, constructions: { connect: { id: constructionHospital.id } } },
+  })
+
+  await prisma.overTimeWork.create({
+    data: {
+      payedAt: new Date(),
+      hours: 4,
+      worker: { connect: { id: Zezinho.id } },
+      overTimeInfo: { connect: { id: overTime60Percent.id } },
+    },
+  })
+
+  await prisma.overTimeWork.create({
+    data: {
+      payedAt: new Date(),
+      hours: 5,
+      worker: { connect: { id: Zezinho.id } },
+      overTimeInfo: { connect: { id: overTime100Percent.id } },
     },
   })
 }

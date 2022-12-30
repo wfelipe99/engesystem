@@ -55,12 +55,7 @@ export const employeeRouter = router({
     }),
 
   getAll: protectedProcedure.query(async ({ ctx }) => {
-    const userSession = ctx.session.user
-
-    const user = await ctx.prisma.user.findUniqueOrThrow({ where: { id: userSession.id }, select: { roles: true } })
-    const userRole = user.roles[0]
-
-    if (!userRole || userRole.hierarchy < Role.Administrativo) {
+    if (!isUserAuthorized(ctx, Role.Administrativo)) {
       throw new TRPCError({ code: 'UNAUTHORIZED' })
     }
 
@@ -74,17 +69,26 @@ export const employeeRouter = router({
       })
     )
     .query(async ({ ctx, input }) => {
-      const userSession = ctx.session.user
-
-      const user = await ctx.prisma.user.findUniqueOrThrow({ where: { id: userSession.id }, select: { roles: true } })
-      const userRole = user.roles[0]
-
-      if (!userRole || userRole.hierarchy < Role.Administrativo) {
+      if (!isUserAuthorized(ctx, Role.Administrativo)) {
         throw new TRPCError({ code: 'UNAUTHORIZED' })
       }
 
       const { id } = input
 
-      return ctx.prisma.user.findUnique({ where: { id }, include: { roles: true } })
+      const employee = await ctx.prisma.user.findUniqueOrThrow({
+        where: { id },
+        include: {
+          roles: true,
+          variableMoney: true,
+          discounts: true,
+          constructions: true,
+          receivedMoneyInAdvance: true,
+          overTimeWork: {
+            include: { overTimeInfo: true },
+          },
+        },
+      })
+
+      return employee
     }),
 })

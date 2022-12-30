@@ -1,3 +1,6 @@
+-- CreateEnum
+CREATE TYPE "UF" AS ENUM ('AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO');
+
 -- CreateTable
 CREATE TABLE "Example" (
     "id" TEXT NOT NULL,
@@ -57,9 +60,9 @@ CREATE TABLE "User" (
 CREATE TABLE "Role" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "UF" TEXT NOT NULL,
+    "UF" "UF" NOT NULL,
     "salary" DECIMAL(10,2) NOT NULL,
-    "hierarchy" INTEGER NOT NULL,
+    "hierarchy" INTEGER NOT NULL DEFAULT 0,
 
     CONSTRAINT "Role_pkey" PRIMARY KEY ("id")
 );
@@ -68,7 +71,7 @@ CREATE TABLE "Role" (
 CREATE TABLE "Discount" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "value" DECIMAL(10,2) NOT NULL,
+    "percentOnSalary" DECIMAL(10,2) NOT NULL,
 
     CONSTRAINT "Discount_pkey" PRIMARY KEY ("id")
 );
@@ -78,7 +81,7 @@ CREATE TABLE "Construction" (
     "id" TEXT NOT NULL,
     "overTimeId" TEXT,
     "name" TEXT NOT NULL,
-    "UF" TEXT NOT NULL,
+    "UF" "UF" NOT NULL,
 
     CONSTRAINT "Construction_pkey" PRIMARY KEY ("id")
 );
@@ -108,8 +111,7 @@ CREATE TABLE "MoneyInAdvance" (
 -- CreateTable
 CREATE TABLE "OverTime" (
     "id" TEXT NOT NULL,
-    "overTimeWorkId" TEXT NOT NULL,
-    "percentageOnSalary" DECIMAL(10,2) NOT NULL,
+    "percentOnWorkedHour" DECIMAL(10,2) NOT NULL,
 
     CONSTRAINT "OverTime_pkey" PRIMARY KEY ("id")
 );
@@ -118,6 +120,7 @@ CREATE TABLE "OverTime" (
 CREATE TABLE "OverTimeWork" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
+    "overTimeId" TEXT NOT NULL,
     "payedAt" TIMESTAMP(3) NOT NULL,
     "hours" INTEGER NOT NULL,
 
@@ -171,9 +174,6 @@ CREATE UNIQUE INDEX "Discount_name_key" ON "Discount"("name");
 CREATE UNIQUE INDEX "Construction_name_UF_key" ON "Construction"("name", "UF");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "OverTime_overTimeWorkId_key" ON "OverTime"("overTimeWorkId");
-
--- CreateIndex
 CREATE UNIQUE INDEX "VerificationToken_token_key" ON "VerificationToken"("token");
 
 -- CreateIndex
@@ -213,7 +213,7 @@ ALTER TABLE "VariableMoney" ADD CONSTRAINT "VariableMoney_userId_fkey" FOREIGN K
 ALTER TABLE "MoneyInAdvance" ADD CONSTRAINT "MoneyInAdvance_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "OverTime" ADD CONSTRAINT "OverTime_overTimeWorkId_fkey" FOREIGN KEY ("overTimeWorkId") REFERENCES "OverTimeWork"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "OverTimeWork" ADD CONSTRAINT "OverTimeWork_overTimeId_fkey" FOREIGN KEY ("overTimeId") REFERENCES "OverTime"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "OverTimeWork" ADD CONSTRAINT "OverTimeWork_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
