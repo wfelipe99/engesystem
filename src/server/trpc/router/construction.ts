@@ -1,6 +1,7 @@
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
-import { Role, ZOD_UF_ENUM } from '../../../utils/utils'
+import { calculateSalary } from '../../../utils/functions'
+import { Role, ZOD_UF_ENUM } from '../../../utils/types'
 
 import { router, protectedProcedure, isUserAuthorized } from '../trpc'
 
@@ -61,5 +62,45 @@ export const constructionRouter = router({
       const { id } = input
 
       return ctx.prisma.construction.findUniqueOrThrow({ where: { id } })
+    }),
+
+  getEmployees: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      if (!isUserAuthorized(ctx, Role.Administrativo)) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' })
+      }
+
+      const { id } = input
+
+      const construction = await ctx.prisma.construction.findUniqueOrThrow({
+        where: { id },
+        select: {
+          employees: {
+            include: {
+              roles: true,
+              receivedVariableValue: true,
+              discounts: true,
+              constructions: true,
+              receivedMoneyInAdvance: true,
+              overTimeWork: {
+                include: { overTimeInfo: true },
+              },
+            },
+          },
+        },
+      })
+
+      const employeesWithSalary = construction.employees.map((employee) => {
+        const salary = calculateSalary(employee)
+
+        return { ...employee, salary }
+      })
+
+      return employeesWithSalary
     }),
 })

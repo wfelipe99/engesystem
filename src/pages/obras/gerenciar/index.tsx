@@ -1,6 +1,6 @@
 import { Container, Box } from '@chakra-ui/react'
 import type { NextPage } from 'next'
-import ConstructionTable from '../../../components/ConstructionTable'
+import ConstructionTable from '../../../components/ConstructionsTable'
 import { trpc } from '../../../utils/trpc'
 
 const Gerenciar: NextPage = () => {

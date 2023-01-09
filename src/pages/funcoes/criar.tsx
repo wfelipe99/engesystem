@@ -18,7 +18,7 @@ import { useForm } from 'react-hook-form'
 import type { SubmitHandler } from 'react-hook-form'
 import type { NextPage } from 'next'
 import { trpc } from '../../utils/trpc'
-import type { ZOD_UF_ENUM } from '../../utils/utils'
+import type { ZOD_UF_ENUM } from '../../utils/types'
 import type { z } from 'zod'
 
 type Inputs = {

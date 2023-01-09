@@ -5,7 +5,7 @@ import 'ag-grid-community/styles/ag-theme-alpine.css' // Optional theme CSS
 import type { Construction as ConstructionPrisma } from '@prisma/client'
 import { useRouter } from 'next/router'
 import { useState, useRef, useMemo, useCallback } from 'react'
-import { AG_GRID_LOCALE_PT_BR } from '../utils/utils'
+import { AG_GRID_LOCALE_PT_BR } from '../utils/types'
 
 type Construction = {
   name: Pick<ConstructionPrisma, 'name'>

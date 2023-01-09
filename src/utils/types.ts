@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client'
 import { z } from 'zod'
 
 export enum Role {
@@ -437,3 +438,29 @@ export const ZOD_UF_ENUM = z.enum([
   'SE',
   'TO',
 ])
+
+const userWithSalaryInfo = Prisma.validator<Prisma.UserArgs>()({
+  include: {
+    roles: true,
+    receivedVariableValue: true,
+    receivedMoneyInAdvance: true,
+    overTimeWork: {
+      include: {
+        overTimeInfo: true,
+      },
+    },
+    discounts: true,
+  },
+})
+
+export type UserWithSalaryInfo = Prisma.UserGetPayload<typeof userWithSalaryInfo>
+
+export type DetailedSalary = {
+  grossSalary: Prisma.Decimal
+  netSalary: Prisma.Decimal
+  vale: Prisma.Decimal
+  bonus: Prisma.Decimal
+  moneyInAdvance: Prisma.Decimal
+  overTime: Prisma.Decimal
+  discount: Prisma.Decimal
+}

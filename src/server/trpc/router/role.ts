@@ -1,6 +1,6 @@
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
-import { Role, ZOD_UF_ENUM } from '../../../utils/utils'
+import { Role, ZOD_UF_ENUM } from '../../../utils/types'
 
 import { router, protectedProcedure, isUserAuthorized } from '../trpc'
 

@@ -3,15 +3,12 @@ import type { CellDoubleClickedEvent, ColDef, SelectionChangedEvent } from 'ag-g
 import 'ag-grid-community/styles/ag-grid.css' // Core grid CSS, always needed
 import 'ag-grid-community/styles/ag-theme-alpine.css' // Optional theme CSS
 import type { UserWithRoles } from 'next-auth'
-import type { Role, User as UserPrisma } from '@prisma/client'
+import type { Role } from '@prisma/client'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { useRouter } from 'next/router'
 import { useState, useRef, useMemo, useCallback } from 'react'
 import { AG_GRID_LOCALE_PT_BR } from '../utils/types'
-import { atom, useAtom } from 'jotai'
-
-export const selectedRowsAtom = atom<UserWithRoles[]>([])
 
 type User = {
   UF: Pick<Role, 'UF'>
@@ -22,15 +19,13 @@ type User = {
 
 type Props = {
   rowData: any
-  showCheckBox?: boolean
 }
 
-export default function EmployeeTable({ rowData, showCheckBox = false }: Props) {
+export default function ManageConstructionTable({ rowData }: Props) {
   const router = useRouter()
-  const [, setSelectedRows] = useAtom(selectedRowsAtom)
 
   const tableFields: ColDef<User>[] = [
-    { field: 'name', headerName: 'Nome', sort: 'asc', checkboxSelection: showCheckBox },
+    { field: 'name', headerName: 'Funcionário', sort: 'asc' },
     {
       valueGetter: (params) => {
         return params.data.roles[0].name
@@ -39,15 +34,55 @@ export default function EmployeeTable({ rowData, showCheckBox = false }: Props) 
     },
     {
       valueGetter: (params) => {
-        return params.data.roles[0].UF
+        return params.data.salary.netSalary
       },
-      headerName: 'UF',
+      headerName: 'Remuneração',
     },
     {
       valueGetter: (params) => {
-        return format(params.data.admissionDate, "d 'de' MMMM 'de' u", { locale: ptBR })
+        return params.data.roles[0].salary
       },
-      headerName: 'Data de Admissão',
+      headerName: 'Proporcional',
+    },
+    {
+      valueGetter: (params) => {
+        return params.data.vale
+      },
+      headerName: 'Vale',
+    },
+    {
+      valueGetter: (params) => {
+        const value = params.data.productionSalary
+
+        if (!value) return 'Não é produção'
+
+        return value
+      },
+      headerName: 'Produção',
+    },
+    {
+      valueGetter: (params) => {
+        return params.data.salary.bonus
+      },
+      headerName: 'Bônus',
+    },
+    {
+      valueGetter: (params) => {
+        return params.data.salary.moneyInAdvance
+      },
+      headerName: 'Adiantamentos',
+    },
+    {
+      valueGetter: (params) => {
+        return params.data.salary.overTime
+      },
+      headerName: 'Total Hora Extra',
+    },
+    {
+      valueGetter: (params) => {
+        return params.data.salary.discount
+      },
+      headerName: 'Total Descontos',
     },
   ]
 
@@ -74,13 +109,6 @@ export default function EmployeeTable({ rowData, showCheckBox = false }: Props) 
     [router]
   )
 
-  const selectionChangedListener = useCallback(
-    (e: SelectionChangedEvent) => {
-      setSelectedRows(e.api.getSelectedRows())
-    },
-    [setSelectedRows]
-  )
-
   return (
     <div>
       {/* Example using Grid's API */}
@@ -98,7 +126,6 @@ export default function EmployeeTable({ rowData, showCheckBox = false }: Props) 
           onRowDoubleClicked={cellDoubleClickedListener}
           localeText={AG_GRID_LOCALE_PT_BR}
           enableCellTextSelection
-          onSelectionChanged={selectionChangedListener}
         />
       </div>
     </div>

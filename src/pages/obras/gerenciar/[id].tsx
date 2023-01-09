@@ -19,6 +19,7 @@ import { IoMdArrowRoundBack } from 'react-icons/io'
 import Link from 'next/link'
 import { useForm } from 'react-hook-form'
 import type { SubmitHandler } from 'react-hook-form'
+import ManageConstructionTable from '../../../components/ManageConstructionTable'
 
 type Inputs = {
   name: string
@@ -26,27 +27,33 @@ type Inputs = {
   CPF: string
 }
 
-const GerenciarFuncionario = () => {
+const GerenciarConstrucao = () => {
   const router = useRouter()
   const { id } = router.query
 
-  if (!id) return <div>Funcionário não localizado.</div>
+  if (!id) return <div>Construção não localizada.</div>
 
   const { data: construction } = trpc.construction.getById.useQuery({ id: id as string })
+  const { data: employees, status } = trpc.construction.getEmployees.useQuery({ id: id as string })
 
-  if (!construction) return <div>Funcionário não localizado.</div>
+  if (!construction) return <div>Construção não localizada.</div>
+  if (!employees) return <div>Construção não localizada.</div>
+  if (status === 'loading') return <div>Carregando</div>
 
   // TODO: Make it with Editable component, so I won't need to create a "Editar" tab
   return (
-    <Container>
+    <Container maxW="container.xl">
       <Link href="/obras/gerenciar" passHref>
         <Button leftIcon={<IoMdArrowRoundBack />} variant="outline">
           Voltar
         </Button>
       </Link>
-      <p>Nome: {construction.name}</p>
+
+      <Box w="100%">
+        <ManageConstructionTable rowData={employees} />
+      </Box>
     </Container>
   )
 }
 
-export default GerenciarFuncionario
+export default GerenciarConstrucao

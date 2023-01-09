@@ -13,7 +13,7 @@ async function main() {
     data: { name: 'Apontador', UF: 'PE', salary: 2000, hierarchy: 1 },
   })
 
-  const Servente = await prisma.role.create({
+  const ServentePE = await prisma.role.create({
     data: { name: 'Servente', UF: 'PE', salary: 2500, hierarchy: 0 },
   })
 
@@ -92,7 +92,7 @@ async function main() {
       pixKey: 'asd49as84f98af',
       vale: 0,
       roles: {
-        connect: { id: Servente.id },
+        connect: { id: ServentePE.id },
       },
       constructions: { connect: { id: constructionHospital.id } },
       discounts: { connect: [{ id: discountAlimentacao.id }, { id: discountPassagem.id }] },
@@ -109,7 +109,7 @@ async function main() {
       productionSalary: 5000,
       vale: 1000.5,
       roles: {
-        connect: { id: Servente.id },
+        connect: { id: ServentePE.id },
       },
       constructions: { connect: { id: constructionHospital.id } },
       discounts: { connect: [{ id: discountAlimentacao.id }, { id: discountPassagem.id }] },
@@ -117,7 +117,7 @@ async function main() {
   })
 
   await prisma.variableValue.create({
-    data: { payedAt: new Date(), bonus: 400, worker: { connect: { id: Zezinho.id } } },
+    data: { payedAt: new Date(), bonus: 400, employee: { connect: { id: Zezinho.id } } },
   })
 
   await prisma.moneyInAdvance.create({
@@ -125,7 +125,7 @@ async function main() {
       payedAt: new Date(),
       value: 3000,
       description: 'Pegou para fazer x coisa',
-      worker: { connect: { id: Zezinho.id } },
+      employee: { connect: { id: Zezinho.id } },
     },
   })
 
@@ -145,7 +145,7 @@ async function main() {
     data: {
       payedAt: new Date(),
       hours: 4,
-      worker: { connect: { id: Zezinho.id } },
+      employee: { connect: { id: Zezinho.id } },
       overTimeInfo: { connect: { id: overTime60Percent.id } },
     },
   })
@@ -154,7 +154,7 @@ async function main() {
     data: {
       payedAt: new Date(),
       hours: 5,
-      worker: { connect: { id: Zezinho.id } },
+      employee: { connect: { id: Zezinho.id } },
       overTimeInfo: { connect: { id: overTime100Percent.id } },
     },
   })

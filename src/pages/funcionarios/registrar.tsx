@@ -6,7 +6,7 @@ import Head from 'next/head'
 import DayPicker from '../../components/DayPicker'
 import { Controller, useForm } from 'react-hook-form'
 import type { SubmitHandler } from 'react-hook-form'
-import { STATES_NAMES } from '../../utils/utils'
+import { STATES_NAMES } from '../../utils/types'
 
 type Inputs = {
   name: string
