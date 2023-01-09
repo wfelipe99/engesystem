@@ -39,6 +39,13 @@ CREATE TABLE "Session" (
 );
 
 -- CreateTable
+CREATE TABLE "VerificationToken" (
+    "identifier" TEXT NOT NULL,
+    "token" TEXT NOT NULL,
+    "expires" TIMESTAMP(3) NOT NULL
+);
+
+-- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
@@ -52,6 +59,8 @@ CREATE TABLE "User" (
     "account" TEXT,
     "operation" TEXT,
     "pixKey" TEXT,
+    "productionSalary" DECIMAL(10,2),
+    "vale" DECIMAL(10,2),
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -68,15 +77,6 @@ CREATE TABLE "Role" (
 );
 
 -- CreateTable
-CREATE TABLE "Discount" (
-    "id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    "percentOnSalary" DECIMAL(10,2) NOT NULL,
-
-    CONSTRAINT "Discount_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "Construction" (
     "id" TEXT NOT NULL,
     "overTimeId" TEXT,
@@ -87,14 +87,22 @@ CREATE TABLE "Construction" (
 );
 
 -- CreateTable
-CREATE TABLE "VariableMoney" (
+CREATE TABLE "Discount" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "percentOnSalary" DECIMAL(10,2) NOT NULL,
+
+    CONSTRAINT "Discount_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "VariableValue" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "payedAt" TIMESTAMP(3) NOT NULL,
-    "productionSalary" DECIMAL(10,2) NOT NULL,
     "bonus" DECIMAL(10,2) NOT NULL,
 
-    CONSTRAINT "VariableMoney_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "VariableValue_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -128,26 +136,19 @@ CREATE TABLE "OverTimeWork" (
 );
 
 -- CreateTable
-CREATE TABLE "VerificationToken" (
-    "identifier" TEXT NOT NULL,
-    "token" TEXT NOT NULL,
-    "expires" TIMESTAMP(3) NOT NULL
-);
-
--- CreateTable
 CREATE TABLE "_RoleToUser" (
     "A" TEXT NOT NULL,
     "B" TEXT NOT NULL
 );
 
 -- CreateTable
-CREATE TABLE "_DiscountToUser" (
+CREATE TABLE "_ConstructionToUser" (
     "A" TEXT NOT NULL,
     "B" TEXT NOT NULL
 );
 
 -- CreateTable
-CREATE TABLE "_ConstructionToUser" (
+CREATE TABLE "_DiscountToUser" (
     "A" TEXT NOT NULL,
     "B" TEXT NOT NULL
 );
@@ -159,6 +160,12 @@ CREATE UNIQUE INDEX "Account_provider_providerAccountId_key" ON "Account"("provi
 CREATE UNIQUE INDEX "Session_sessionToken_key" ON "Session"("sessionToken");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "VerificationToken_token_key" ON "VerificationToken"("token");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "VerificationToken_identifier_token_key" ON "VerificationToken"("identifier", "token");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
@@ -168,16 +175,10 @@ CREATE UNIQUE INDEX "User_name_CPF_key" ON "User"("name", "CPF");
 CREATE UNIQUE INDEX "Role_name_UF_key" ON "Role"("name", "UF");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Discount_name_key" ON "Discount"("name");
-
--- CreateIndex
 CREATE UNIQUE INDEX "Construction_name_UF_key" ON "Construction"("name", "UF");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "VerificationToken_token_key" ON "VerificationToken"("token");
-
--- CreateIndex
-CREATE UNIQUE INDEX "VerificationToken_identifier_token_key" ON "VerificationToken"("identifier", "token");
+CREATE UNIQUE INDEX "Discount_name_key" ON "Discount"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_RoleToUser_AB_unique" ON "_RoleToUser"("A", "B");
@@ -186,16 +187,16 @@ CREATE UNIQUE INDEX "_RoleToUser_AB_unique" ON "_RoleToUser"("A", "B");
 CREATE INDEX "_RoleToUser_B_index" ON "_RoleToUser"("B");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "_DiscountToUser_AB_unique" ON "_DiscountToUser"("A", "B");
-
--- CreateIndex
-CREATE INDEX "_DiscountToUser_B_index" ON "_DiscountToUser"("B");
-
--- CreateIndex
 CREATE UNIQUE INDEX "_ConstructionToUser_AB_unique" ON "_ConstructionToUser"("A", "B");
 
 -- CreateIndex
 CREATE INDEX "_ConstructionToUser_B_index" ON "_ConstructionToUser"("B");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "_DiscountToUser_AB_unique" ON "_DiscountToUser"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_DiscountToUser_B_index" ON "_DiscountToUser"("B");
 
 -- AddForeignKey
 ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -207,7 +208,7 @@ ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId"
 ALTER TABLE "Construction" ADD CONSTRAINT "Construction_overTimeId_fkey" FOREIGN KEY ("overTimeId") REFERENCES "OverTime"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "VariableMoney" ADD CONSTRAINT "VariableMoney_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "VariableValue" ADD CONSTRAINT "VariableValue_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "MoneyInAdvance" ADD CONSTRAINT "MoneyInAdvance_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -225,13 +226,13 @@ ALTER TABLE "_RoleToUser" ADD CONSTRAINT "_RoleToUser_A_fkey" FOREIGN KEY ("A") 
 ALTER TABLE "_RoleToUser" ADD CONSTRAINT "_RoleToUser_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_DiscountToUser" ADD CONSTRAINT "_DiscountToUser_A_fkey" FOREIGN KEY ("A") REFERENCES "Discount"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "_DiscountToUser" ADD CONSTRAINT "_DiscountToUser_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "_ConstructionToUser" ADD CONSTRAINT "_ConstructionToUser_A_fkey" FOREIGN KEY ("A") REFERENCES "Construction"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_ConstructionToUser" ADD CONSTRAINT "_ConstructionToUser_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_DiscountToUser" ADD CONSTRAINT "_DiscountToUser_A_fkey" FOREIGN KEY ("A") REFERENCES "Discount"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_DiscountToUser" ADD CONSTRAINT "_DiscountToUser_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

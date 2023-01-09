@@ -90,6 +90,7 @@ async function main() {
       CPF: '123',
       admissionDate: new Date(),
       pixKey: 'asd49as84f98af',
+      vale: 0,
       roles: {
         connect: { id: Servente.id },
       },
@@ -98,8 +99,25 @@ async function main() {
     },
   })
 
-  await prisma.variableMoney.create({
-    data: { payedAt: new Date(), productionSalary: 3000, bonus: 400, worker: { connect: { id: Zezinho.id } } },
+  const Joaozinho = await prisma.user.create({
+    data: {
+      name: 'Joãozinho',
+      email: 'e@email.com',
+      CPF: '123',
+      admissionDate: new Date(),
+      pixKey: 'asd49as84f98af',
+      productionSalary: 5000,
+      vale: 1000.5,
+      roles: {
+        connect: { id: Servente.id },
+      },
+      constructions: { connect: { id: constructionHospital.id } },
+      discounts: { connect: [{ id: discountAlimentacao.id }, { id: discountPassagem.id }] },
+    },
+  })
+
+  await prisma.variableValue.create({
+    data: { payedAt: new Date(), bonus: 400, worker: { connect: { id: Zezinho.id } } },
   })
 
   await prisma.moneyInAdvance.create({

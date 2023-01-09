@@ -69,6 +69,16 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// In the code it can be refered as Workder too
+// I need to use "User" in model's name because of the Adapter from next-auth
 model User {
   id                     String           @id @default(cuid())
   name                   String
@@ -82,10 +92,12 @@ model User {
   account                String?
   operation              String?
   pixKey                 String?
+  productionSalary       Decimal?         @db.Decimal(10, 2)
+  vale                   Decimal?         @db.Decimal(10, 2)
   accounts               Account[]
   sessions               Session[]
   roles                  Role[]
-  variableMoney          VariableMoney[]
+  receivedVariableValue  VariableValue[]
   discounts              Discount[]
   constructions          Construction[]
   receivedMoneyInAdvance MoneyInAdvance[]
@@ -112,13 +124,6 @@ model Role {
   @@unique([name, UF])
 }
 
-model Discount {
-  id              String  @id @default(cuid())
-  name            String  @unique
-  percentOnSalary Decimal @db.Decimal(10, 2)
-  user            User[]
-}
-
 model Construction {
   id         String    @id @default(cuid())
   overTimeId String?
@@ -130,13 +135,19 @@ model Construction {
   @@unique([name, UF])
 }
 
-model VariableMoney {
-  id               String   @id @default(cuid())
-  userId           String
-  payedAt          DateTime
-  productionSalary Decimal  @db.Decimal(10, 2)
-  bonus            Decimal  @db.Decimal(10, 2)
-  worker           User     @relation(fields: [userId], references: [id])
+model Discount {
+  id              String  @id @default(cuid())
+  name            String  @unique
+  percentOnSalary Decimal @db.Decimal(10, 2)
+  user            User[]
+}
+
+model VariableValue {
+  id      String   @id @default(cuid())
+  userId  String
+  payedAt DateTime
+  bonus   Decimal  @db.Decimal(10, 2)
+  worker  User     @relation(fields: [userId], references: [id])
 }
 
 model MoneyInAdvance {
@@ -163,12 +174,4 @@ model OverTimeWork {
   hours        Int
   overTimeInfo OverTime @relation(fields: [overTimeId], references: [id])
   worker       User     @relation(fields: [userId], references: [id])
-}
-
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@unique([identifier, token])
 }
