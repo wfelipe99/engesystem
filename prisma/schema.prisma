@@ -93,7 +93,7 @@ model User {
   operation              String?
   pixKey                 String?
   productionSalary       Decimal?         @db.Decimal(10, 2)
-  vale                   Decimal          @default(0) @db.Decimal(10, 2)
+  TransportVouch         Decimal          @default(0) @db.Decimal(10, 2)
   accounts               Account[]
   sessions               Session[]
   roles                  Role[]
@@ -145,7 +145,7 @@ model Discount {
 model VariableValue {
   id       String   @id @default(cuid())
   userId   String
-  payedAt  DateTime
+  paidAt   DateTime
   bonus    Decimal  @db.Decimal(10, 2)
   employee User     @relation(fields: [userId], references: [id])
 }
@@ -153,7 +153,7 @@ model VariableValue {
 model MoneyInAdvance {
   id          String   @id @default(cuid())
   userId      String
-  payedAt     DateTime
+  paidAt      DateTime
   value       Decimal  @db.Decimal(10, 2)
   description String
   employee    User     @relation(fields: [userId], references: [id])
@@ -170,7 +170,7 @@ model OverTimeWork {
   id           String   @id @default(cuid())
   userId       String
   overTimeId   String
-  payedAt      DateTime
+  paidAt       DateTime
   hours        Int
   overTimeInfo OverTime @relation(fields: [overTimeId], references: [id])
   employee     User     @relation(fields: [userId], references: [id])
