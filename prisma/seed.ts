@@ -90,7 +90,7 @@ async function main() {
       CPF: '123',
       admissionDate: new Date(),
       pixKey: 'asd49as84f98af',
-      vale: 0,
+      TransportVouch: 0,
       roles: {
         connect: { id: ServentePE.id },
       },
@@ -107,7 +107,7 @@ async function main() {
       admissionDate: new Date(),
       pixKey: 'asd49as84f98af',
       productionSalary: 5000,
-      vale: 1000.5,
+      TransportVouch: 1000.5,
       roles: {
         connect: { id: ServentePE.id },
       },
@@ -122,7 +122,7 @@ async function main() {
 
   await prisma.moneyInAdvance.create({
     data: {
-      payedAt: new Date(),
+      paidAt: new Date(),
       value: 3000,
       description: 'Pegou para fazer x coisa',
       employee: { connect: { id: Zezinho.id } },
@@ -143,7 +143,7 @@ async function main() {
 
   await prisma.overTimeWork.create({
     data: {
-      payedAt: new Date(),
+      paidAt: new Date(),
       hours: 4,
       employee: { connect: { id: Zezinho.id } },
       overTimeInfo: { connect: { id: overTime60Percent.id } },
@@ -152,7 +152,7 @@ async function main() {
 
   await prisma.overTimeWork.create({
     data: {
-      payedAt: new Date(),
+      paidAt: new Date(),
       hours: 5,
       employee: { connect: { id: Zezinho.id } },
       overTimeInfo: { connect: { id: overTime100Percent.id } },
